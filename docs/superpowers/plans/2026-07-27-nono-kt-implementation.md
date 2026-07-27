@@ -1090,3 +1090,19 @@ gh release view v0.1.0 --repo elonzh/nono-kt
 ```
 
 Resolve `com.elonzh.nono:nono-kt:0.1.0` from Maven Central in a clean Gradle consumer. Completion requires the GitHub Release, Central artifact, source/Javadoc jars, matching commit/tag, and green CI to be externally observable.
+
+### Execution record
+
+Local implementation, documentation, unit checks, Java/Kotlin examples, workflow
+validation, real nono 0.69.0 integration, and isolated Maven consumer resolution
+are complete on `main`.
+
+The release signing path was additionally verified with a disposable OpenPGP
+key: the main, sources, and Javadoc jars, Gradle module metadata, and POM were
+all signed and each detached signature was cryptographically verified. The
+disposable key and isolated repository were removed after validation.
+
+Steps 9–11 remain external: public GitHub repository creation and code egress
+require explicit publication authorization, and Maven Central publication
+requires the account's Central Portal credentials plus its persistent OpenPGP
+release key.
