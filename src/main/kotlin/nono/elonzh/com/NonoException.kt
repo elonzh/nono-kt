@@ -39,3 +39,9 @@ public class NonoProcessException(
     message: String,
     cause: Throwable,
 ) : NonoException(message, cause)
+
+public class NonoCommandFailedException(
+    public val operation: String,
+    public val exitCode: Int,
+    public val stderr: String,
+) : NonoException("nono $operation failed with exit code $exitCode: ${stderr.trim()}")

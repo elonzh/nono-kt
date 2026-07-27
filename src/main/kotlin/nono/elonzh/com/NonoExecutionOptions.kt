@@ -84,6 +84,17 @@ public class NonoExecutionOptions private constructor(
     public val stderr: NonoOutput,
     public val timeout: Duration?,
 ) {
+    internal fun withEnvironment(additional: Map<String, String>): NonoExecutionOptions =
+        NonoExecutionOptions(
+            workingDirectory = workingDirectory,
+            environment = additional + environment,
+            inheritEnvironment = inheritEnvironment,
+            input = input,
+            stdout = stdout,
+            stderr = stderr,
+            timeout = timeout,
+        )
+
     public class Builder internal constructor() {
         private var workingDirectory: Path? = null
         private val environment = linkedMapOf<String, String>()

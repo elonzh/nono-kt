@@ -38,7 +38,9 @@ internal class ExecutableResolver(
 
     fun probe(path: Path): NonoExecutable {
         val resolved = resolve(path)
-        val process = ProcessBuilder(resolved.toString(), "--version").start()
+        val processBuilder = ProcessBuilder(resolved.toString(), "--version")
+        processBuilder.environment().putAll(environment)
+        val process = processBuilder.start()
         val stdout = process.inputStream.bufferedReader().use { it.readText() }
         val stderr = process.errorStream.bufferedReader().use { it.readText() }
         val exitCode = process.waitFor()

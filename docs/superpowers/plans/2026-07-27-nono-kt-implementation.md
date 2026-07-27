@@ -658,7 +658,7 @@ Run:
 
 Expected: all JSON compatibility tests pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src
@@ -690,7 +690,7 @@ Extract trailing diagnostics additively without hiding child stderr or changing 
 - Produces: `NonoClient.showProfile(String): NonoProfile`
 - Produces: `NonoClient.validateProfile(String, Boolean): NonoProfileValidation`
 
-- [ ] **Step 1: Write failing client tests**
+- [x] **Step 1: Write failing client tests**
 
 Using `FakeNono`, assert strict construction probes `--version`, rejects 0.68.0, can defer probing until first call, renders child argv after `--`, returns child non-zero exit codes, parses requested diagnostics, and routes profile methods through their JSON flags.
 
@@ -703,7 +703,7 @@ client.execute(
 assertEquals(listOf("why", "--json", "--path", "a path with spaces"), recordedArguments)
 ```
 
-- [ ] **Step 2: Write failing Java source-compatibility test**
+- [x] **Step 2: Write failing Java source-compatibility test**
 
 ```java
 try (NonoClient client = NonoClient.builder()
@@ -718,7 +718,7 @@ try (NonoClient client = NonoClient.builder()
 
 Also compile and exercise builders, `CompletionStage`, profile methods, byte output, and checked model getters from Java.
 
-- [ ] **Step 3: Run client tests and verify RED**
+- [x] **Step 3: Run client tests and verify RED**
 
 Run:
 
@@ -728,7 +728,7 @@ Run:
 
 Expected: compilation fails because `NonoClient` and DSL entry points are absent.
 
-- [ ] **Step 4: Implement the immutable client**
+- [x] **Step 4: Implement the immutable client**
 
 ```kotlin
 public class NonoClient private constructor(
@@ -750,7 +750,7 @@ public class NonoClient private constructor(
 
 Client-owned executors use named daemon threads and shut down in `close()`. Caller-supplied executors remain caller-owned. Synchronous methods unwrap completion failures into the declared `NonoException` hierarchy and preserve interruption.
 
-- [ ] **Step 5: Add Kotlin DSL entry points**
+- [x] **Step 5: Add Kotlin DSL entry points**
 
 ```kotlin
 public inline fun nonoRun(
@@ -763,7 +763,7 @@ public inline fun nonoClient(block: NonoClient.Builder.() -> Unit): NonoClient
 
 The DSL delegates to the same builders used by Java; it does not create a second behavior path.
 
-- [ ] **Step 6: Run all tests and API checks**
+- [x] **Step 6: Run all tests and API checks**
 
 Run:
 
@@ -773,7 +773,7 @@ Run:
 
 Expected: Kotlin and Java tests pass and public API compilation is warning-free.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src api

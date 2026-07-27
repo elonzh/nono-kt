@@ -18,18 +18,21 @@ internal class FakeNono private constructor(
         }
 
     companion object {
-        fun create(directory: Path): FakeNono {
+        fun create(
+            directory: Path,
+            version: String = "0.69.0",
+        ): FakeNono {
             directory.createDirectories()
             val executable = directory.resolve("nono")
             val argumentsFile = directory.resolve("arguments.txt")
-            Files.writeString(executable, script())
+            Files.writeString(executable, script(version))
             check(executable.toFile().setExecutable(true)) {
                 "failed to make fake nono executable"
             }
             return FakeNono(executable = executable, argumentsFile = argumentsFile)
         }
 
-        private fun script(): String =
+        private fun script(version: String): String =
             """
             #!/bin/sh
             if [ -n "${'$'}{FAKE_NONO_ARGS_FILE:-}" ]; then
@@ -40,7 +43,7 @@ internal class FakeNono private constructor(
             fi
 
             if [ "${'$'}{1:-}" = "--version" ]; then
-              printf 'nono %s\n' "${'$'}{FAKE_NONO_VERSION:-0.69.0}"
+              printf '%s\n' 'nono $version'
               exit 0
             fi
 
@@ -99,6 +102,11 @@ internal class FakeNono private constructor(
                 child_pid="${'$'}!"
                 printf '%s\n' "${'$'}child_pid"
                 wait "${'$'}child_pid"
+                ;;
+              diagnostics)
+                printf 'child error\n' >&2
+                printf '%s\n' '{"session":{"exit_code":1,"denials":[],"ipc_denials":[],"violations":[],"diagnostics":[{"code":"network_blocked","severity":"error","message":"blocked"}]},"proxy":[]}' >&2
+                exit 1
                 ;;
               *)
                 printf 'unsupported fake child\n' >&2
