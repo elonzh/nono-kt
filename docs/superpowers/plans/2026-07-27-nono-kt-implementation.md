@@ -195,7 +195,7 @@ Run:
 
 Expected: all tests pass and ktlint reports no violations.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add settings.gradle.kts build.gradle.kts gradle Taskfile.yml .gitignore src
@@ -226,7 +226,7 @@ Add tested nono semantic-version parsing and compatibility errors."
 - Produces: `NonoCommandRequest.builder(String...): NonoCommandRequest.Builder`
 - Produces: `RunArgumentRenderer.render(executable, request): List<String>`
 
-- [ ] **Step 1: Write failing executable-resolution tests**
+- [x] **Step 1: Write failing executable-resolution tests**
 
 Create temporary executable files and pass a controlled environment map. Assert:
 
@@ -238,7 +238,7 @@ assertFailsWith<NonoExecutableNotFoundException> {
 }
 ```
 
-- [ ] **Step 2: Run resolver tests and verify RED**
+- [x] **Step 2: Run resolver tests and verify RED**
 
 Run:
 
@@ -248,7 +248,7 @@ Run:
 
 Expected: compilation fails because `ExecutableResolver` is absent.
 
-- [ ] **Step 3: Implement explicit-path and PATH discovery**
+- [x] **Step 3: Implement explicit-path and PATH discovery**
 
 Resolve an explicit path before `PATH`, require a regular executable file, split `PATH` using `File.pathSeparator`, and return an absolute normalized path. Do not invoke a shell or consult aliases.
 
@@ -263,7 +263,7 @@ internal class ExecutableResolver(
 
 Probe with `ProcessBuilder(path.toString(), "--version")`, require exit code 0, parse stdout using `NonoVersion.parse`, and preserve stderr in probe exceptions.
 
-- [ ] **Step 4: Write failing argv mapping and conflict tests**
+- [x] **Step 4: Write failing argv mapping and conflict tests**
 
 Use hand-derived expected arrays. The canonical path mapping table is:
 
@@ -330,7 +330,7 @@ assertEquals(
 
 Add separate tests that reject: empty child argv, NUL-containing values, config plus sandbox flags, extends without profile, detach timeout without detached, rollback plus no-rollback, rollback-all plus rollback-include, rollback destination without rollback, no-audit plus audit/rollback, and audit signing with disabled audit integrity.
 
-- [ ] **Step 5: Run renderer tests and verify RED**
+- [x] **Step 5: Run renderer tests and verify RED**
 
 Run:
 
@@ -340,7 +340,7 @@ Run:
 
 Expected: compilation fails because run builders and renderer are absent.
 
-- [ ] **Step 6: Implement typed builders and canonical rendering**
+- [x] **Step 6: Implement typed builders and canonical rendering**
 
 `NonoRunOptions.Builder` exposes one method per canonical nono 0.69.0 run flag:
 
@@ -412,7 +412,7 @@ public fun verbose(level: Int): Builder
 
 Also expose deprecated CLI flags only with `@Deprecated` Java-visible methods: `allowNetwork`, `allowCommand`, and `blockCommand`. Render only canonical flag spellings and preserve insertion order within each repeated option.
 
-- [ ] **Step 7: Run targeted and full tests**
+- [x] **Step 7: Run targeted and full tests**
 
 Run:
 

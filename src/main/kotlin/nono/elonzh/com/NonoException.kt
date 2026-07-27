@@ -14,3 +14,18 @@ public class NonoCompatibilityException(
     public val required: NonoVersion,
     public val actual: NonoVersion,
 ) : NonoException("nono $required or newer is required, but $actual is installed")
+
+public class NonoExecutableNotFoundException(
+    public val requestedPath: String?,
+) : NonoException(
+        requestedPath?.let { "nono executable is not usable: $it" }
+            ?: "nono executable was not found on PATH",
+    )
+
+public class NonoExecutableProbeException(
+    public val executable: String,
+    public val exitCode: Int,
+    public val stderr: String,
+) : NonoException(
+        "Failed to probe nono executable $executable (exit $exitCode): ${stderr.trim()}",
+    )
