@@ -1,5 +1,6 @@
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -36,6 +37,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.register("printVersion") {
+    doLast {
+        println(project.version)
+    }
 }
 
 tasks.check {
@@ -97,7 +104,7 @@ tasks.register("docsCheck") {
 }
 
 configure<MavenPublishBaseExtension> {
-    publishToMavenCentral()
+    publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
     pom {
@@ -128,5 +135,11 @@ configure<MavenPublishBaseExtension> {
             connection.set("scm:git:https://github.com/elonzh/nono-kt.git")
             developerConnection.set("scm:git:ssh://git@github.com/elonzh/nono-kt.git")
         }
+    }
+}
+
+gradle.taskGraph.whenReady {
+    extensions.configure<SigningExtension> {
+        isRequired = allTasks.any { task -> task.name.contains("MavenCentral") }
     }
 }

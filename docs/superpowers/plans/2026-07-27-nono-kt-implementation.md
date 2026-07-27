@@ -888,7 +888,7 @@ Compile standalone Kotlin and Java consumer examples as part of repository check
 - Consumes: root `task check`, `task integration`, and Gradle publication tasks.
 - Produces: Linux/macOS CI and tag-driven Central/GitHub releases.
 
-- [ ] **Step 1: Add local publication validation**
+- [x] **Step 1: Add local publication validation**
 
 Configure the POM with:
 
@@ -903,7 +903,7 @@ scm: https://github.com/elonzh/nono-kt
 
 Add `task publish:local` to run `publishToMavenLocal`, then resolve the exact generated version from an isolated Gradle consumer fixture.
 
-- [ ] **Step 2: Run local publication validation**
+- [x] **Step 2: Run local publication validation**
 
 Run:
 
@@ -914,11 +914,11 @@ task publish:local
 
 Expected: signed publication metadata is skipped only for local snapshot validation; POM, module metadata, main jar, sources jar, and Javadoc jar exist and the consumer resolves them.
 
-- [ ] **Step 3: Add CI workflow**
+- [x] **Step 3: Add CI workflow**
 
 `ci.yml` triggers on pushes and pull requests. A Linux job runs `task check`; a matrix job runs the real integration test on `ubuntu-latest` and `macos-latest` after installing nono 0.69.0 or the selected newer compatibility version. Upload test reports on failure.
 
-- [ ] **Step 4: Add release workflow**
+- [x] **Step 4: Add release workflow**
 
 `release.yml` triggers on `v*` tags, verifies that tag `vX.Y.Z` equals `VERSION_NAME=X.Y.Z`, runs `task check` and both host integrations, publishes with:
 
@@ -931,7 +931,7 @@ ORG_GRADLE_PROJECT_signingInMemoryKeyPassword
 
 Then create a GitHub Release with generated release notes only after Maven publication succeeds.
 
-- [ ] **Step 5: Validate workflow syntax and publication**
+- [x] **Step 5: Validate workflow syntax and publication**
 
 Run:
 
@@ -942,7 +942,7 @@ task publish:local
 
 Parse both workflow files with a YAML parser in `task check`. Expected: all repository and publication validation passes.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add .github build.gradle.kts Taskfile.yml docs/releasing.md

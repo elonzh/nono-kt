@@ -11,6 +11,7 @@ tasks:
     desc: Run all tests and static checks
     cmds:
       - ./gradlew check ktlintCheck --no-daemon
+      - ruby scripts/verify-workflows.rb
 
   lint:
     desc: Check Kotlin and Kotlin Gradle formatting
@@ -26,3 +27,8 @@ tasks:
     desc: Check bilingual documentation, links, and examples
     cmds:
       - ./gradlew docsCheck --no-daemon
+
+  publish:local:
+    desc: Publish to an isolated Maven repository and compile a consumer
+    cmds:
+      - ./scripts/verify-local-publication.sh
