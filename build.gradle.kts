@@ -38,6 +38,64 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.check {
+    dependsOn("docsCheck")
+    dependsOn(":examples:kotlin:compileKotlin")
+    dependsOn(":examples:java:compileJava")
+}
+
+val documentationPairs =
+    listOf(
+        "README.md" to "README.zh-Hans.md",
+        "docs/getting-started.md" to "docs/getting-started.zh-Hans.md",
+        "docs/run-api.md" to "docs/run-api.zh-Hans.md",
+        "docs/profiles-and-diagnostics.md" to "docs/profiles-and-diagnostics.zh-Hans.md",
+        "docs/compatibility.md" to "docs/compatibility.zh-Hans.md",
+    )
+
+tasks.register("docsCheck") {
+    group = "verification"
+    description = "Checks bilingual documentation, local links, and examples."
+    dependsOn(":examples:kotlin:compileKotlin")
+    dependsOn(":examples:java:compileJava")
+
+    doLast {
+        documentationPairs.forEach { (english, chinese) ->
+            val englishFile = file(english)
+            val chineseFile = file(chinese)
+            require(englishFile.isFile) { "Missing English document: $english" }
+            require(chineseFile.isFile) { "Missing Chinese document: $chinese" }
+            require(englishFile.readText().contains(chineseFile.name)) {
+                "$english does not link to $chinese"
+            }
+            require(chineseFile.readText().contains(englishFile.name)) {
+                "$chinese does not link to $english"
+            }
+        }
+
+        val markdownFiles =
+            files(
+                fileTree(projectDir) {
+                    include("*.md")
+                    include("docs/*.md")
+                },
+            )
+        val linkPattern = Regex("""\[[^]]*]\(([^)]+)\)""")
+        val uriScheme = Regex("""^[A-Za-z][A-Za-z0-9+.-]*:""")
+        markdownFiles.forEach { source ->
+            linkPattern.findAll(source.readText()).forEach { match ->
+                val target = match.groupValues[1].substringBefore('#')
+                if (target.isNotEmpty() && !target.startsWith("#") && !uriScheme.containsMatchIn(target)) {
+                    val resolved = source.parentFile.resolve(target).normalize()
+                    require(resolved.exists()) {
+                        "Broken local Markdown link in ${source.relativeTo(projectDir)}: $target"
+                    }
+                }
+            }
+        }
+    }
+}
+
 configure<MavenPublishBaseExtension> {
     publishToMavenCentral()
     signAllPublications()

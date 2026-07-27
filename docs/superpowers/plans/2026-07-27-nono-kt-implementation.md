@@ -814,11 +814,11 @@ Add Kotlin DSL helpers and verified Java builders and getters."
 - Produces: independently compilable Kotlin and Java examples.
 - Produces: paired English/Chinese user documentation.
 
-- [ ] **Step 1: Add example compilation tests**
+- [x] **Step 1: Add example compilation tests**
 
 Include both examples as Gradle subprojects and make root `check` depend on their `compileKotlin`/`compileJava` tasks. Each example depends on `project(":")` and uses only public API.
 
-- [ ] **Step 2: Run example compilation and verify RED**
+- [x] **Step 2: Run example compilation and verify RED**
 
 Run:
 
@@ -828,7 +828,7 @@ Run:
 
 Expected: Gradle reports missing example build/source files.
 
-- [ ] **Step 3: Implement minimal examples**
+- [x] **Step 3: Implement minimal examples**
 
 Kotlin:
 
@@ -846,13 +846,13 @@ NonoClient.builder().build().use { client ->
 
 Java uses `NonoClient.builder()`, `NonoRunOptions.builder()`, and `NonoRunRequest.builder()` without Kotlin-only helpers. Both examples pass the `printf` argv directly and never add shell parsing.
 
-- [ ] **Step 4: Write synchronized documentation**
+- [x] **Step 4: Write synchronized documentation**
 
 Both README files include: project status, installation coordinates, nono 0.69.0 prerequisite, Kotlin and Java quick starts, explicit policy ownership, result semantics, compatibility table, documentation index, and language switch.
 
 The paired guides cover every public builder family and use matching code behavior. `docs/compatibility*` state Java 17+, macOS/Linux, nono 0.69.0+, forward-compatible generic commands, and semantic versioning. `SECURITY.md` directs vulnerability reports privately and states that the wrapper is not itself a sandbox.
 
-- [ ] **Step 5: Validate docs and examples**
+- [x] **Step 5: Validate docs and examples**
 
 Run:
 
@@ -863,7 +863,7 @@ task docs
 
 `task docs` checks reciprocal links, paired English/Chinese files, absent broken local Markdown links, and example compilation. Expected: both commands exit 0.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add README.md README.zh-Hans.md docs examples settings.gradle.kts Taskfile.yml CONTRIBUTING.md SECURITY.md CHANGELOG.md LICENSE

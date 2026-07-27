@@ -21,3 +21,8 @@ tasks:
     desc: Format Kotlin and Kotlin Gradle files
     cmds:
       - ./gradlew ktlintFormat --no-daemon
+
+  docs:
+    desc: Check bilingual documentation, links, and examples
+    cmds:
+      - ./gradlew docsCheck --no-daemon

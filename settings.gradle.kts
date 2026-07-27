@@ -13,3 +13,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "nono-kt"
+
+include(":examples:kotlin")
+include(":examples:java")
