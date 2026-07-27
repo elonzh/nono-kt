@@ -39,6 +39,35 @@ tasks.test {
     useJUnitPlatform()
 }
 
+val integrationTestSourceSet =
+    sourceSets.create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+
+configurations[integrationTestSourceSet.implementationConfigurationName].extendsFrom(
+    configurations.testImplementation.get(),
+)
+configurations[integrationTestSourceSet.runtimeOnlyConfigurationName].extendsFrom(
+    configurations.testRuntimeOnly.get(),
+)
+
+tasks.register<Test>("integrationTest") {
+    group = "verification"
+    description = "Runs tests against an installed supported nono CLI."
+    testClassesDirs = integrationTestSourceSet.output.classesDirs
+    classpath = integrationTestSourceSet.runtimeClasspath
+    useJUnitPlatform()
+    shouldRunAfter(tasks.test)
+    outputs.upToDateWhen { false }
+
+    doFirst {
+        require(System.getenv("NONO_INTEGRATION") == "1") {
+            "Set NONO_INTEGRATION=1 to run real nono integration tests"
+        }
+    }
+}
+
 tasks.register("printVersion") {
     doLast {
         println(project.version)

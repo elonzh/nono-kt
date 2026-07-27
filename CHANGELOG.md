@@ -11,3 +11,4 @@ All notable changes are documented here. The project follows
   handling.
 - Add profile and diagnostics JSON models.
 - Add Linux and macOS compatibility checks, examples, and bilingual docs.
+- Verify the public API against the official nono 0.69.0 CLI release.

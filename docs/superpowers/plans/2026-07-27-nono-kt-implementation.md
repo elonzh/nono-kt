@@ -966,7 +966,7 @@ Validate Maven artifacts locally and publish signed tag releases to Central and 
 - Consumes: installed nono 0.69.0+ and all public APIs.
 - Produces: verified `elonzh/nono-kt` remote and release `v0.1.0`.
 
-- [ ] **Step 1: Write integration tests before enabling the source set**
+- [x] **Step 1: Write integration tests before enabling the source set**
 
 ```kotlin
 class NonoIntegrationTest {
@@ -988,7 +988,7 @@ class NonoIntegrationTest {
 
 Add tests for profile list JSON, child exit 23 propagation, separate stdout/stderr, diagnostics request, and timeout termination.
 
-- [ ] **Step 2: Run the integration target and verify RED**
+- [x] **Step 2: Run the integration target and verify RED**
 
 Run:
 
@@ -998,11 +998,11 @@ Run:
 
 Expected: Gradle reports that `integrationTest` is not defined.
 
-- [ ] **Step 3: Configure the integration source set**
+- [x] **Step 3: Configure the integration source set**
 
 Create an `integrationTest` source set extending main/test dependencies, register a JUnit Platform `integrationTest` task, require `NONO_INTEGRATION=1`, and make `task integration` set that environment. Keep unit `check` deterministic without an installed nono.
 
-- [ ] **Step 4: Install and verify the supported nono CLI**
+- [x] **Step 4: Install and verify the supported nono CLI**
 
 Use the official release asset or documented installer, then run:
 
@@ -1013,7 +1013,7 @@ NONO_INTEGRATION=1 ./gradlew integrationTest --no-daemon
 
 Expected: version is 0.69.0 or newer and every integration test passes.
 
-- [ ] **Step 5: Run the complete local acceptance suite**
+- [x] **Step 5: Run the complete local acceptance suite**
 
 Run:
 
@@ -1028,7 +1028,7 @@ git status --short
 
 Expected: all tasks exit 0, diff check is clean, and only intended release changes remain.
 
-- [ ] **Step 6: Commit the integration and release state**
+- [x] **Step 6: Commit the integration and release state**
 
 ```bash
 git add src/integrationTest build.gradle.kts Taskfile.yml CHANGELOG.md

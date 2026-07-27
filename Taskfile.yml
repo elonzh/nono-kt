@@ -32,3 +32,10 @@ tasks:
     desc: Publish to an isolated Maven repository and compile a consumer
     cmds:
       - ./scripts/verify-local-publication.sh
+
+  integration:
+    desc: Run tests against an installed supported nono CLI
+    env:
+      NONO_INTEGRATION: "1"
+    cmds:
+      - ./gradlew integrationTest --no-daemon
