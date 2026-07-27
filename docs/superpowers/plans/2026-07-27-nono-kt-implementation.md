@@ -1038,7 +1038,7 @@ git commit -m "test: verify nono CLI integration" \
 Record the validated 0.1.0 release scope."
 ```
 
-- [ ] **Step 7: Materialize the requested local repository**
+- [x] **Step 7: Materialize the requested local repository**
 
 Copy the verified repository, including `.git`, from the isolated temporary workspace to the previously absent `~/workspace/nono-kt`. Verify:
 
@@ -1049,7 +1049,7 @@ git -C ~/workspace/nono-kt log --oneline --decorate -8
 
 Expected: branch `codex/initial-implementation` is clean and contains the design, plan, implementation, documentation, automation, and integration commits.
 
-- [ ] **Step 8: Complete the local implementation branch**
+- [x] **Step 8: Complete the local implementation branch**
 
 After the finishing-branch verification gate, fast-forward `main` locally:
 
