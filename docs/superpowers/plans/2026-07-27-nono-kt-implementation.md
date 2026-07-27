@@ -1060,7 +1060,7 @@ git merge --ff-only codex/initial-implementation
 
 Expected: `main` points at the fully verified implementation commit.
 
-- [ ] **Step 9: Create and push the GitHub repository**
+- [x] **Step 9: Create and push the GitHub repository**
 
 Run:
 
@@ -1071,7 +1071,7 @@ gh repo view elonzh/nono-kt --json nameWithOwner,isPrivate,url,defaultBranchRef
 
 Expected: `nameWithOwner` is `elonzh/nono-kt`, `isPrivate` is false, and default branch is `main`.
 
-- [ ] **Step 10: Create and push the signed tag**
+- [x] **Step 10: Create and push the signed tag**
 
 Create signed tag `v0.1.0` and push it:
 
@@ -1080,7 +1080,7 @@ git tag -s v0.1.0 -m "nono-kt 0.1.0"
 git push origin v0.1.0
 ```
 
-- [ ] **Step 11: Verify external publication**
+- [x] **Step 11: Verify external publication**
 
 Watch the release workflow to completion and verify:
 
@@ -1093,16 +1093,26 @@ Resolve `com.elonzh.nono:nono-kt:0.1.0` from Maven Central in a clean Gradle con
 
 ### Execution record
 
-Local implementation, documentation, unit checks, Java/Kotlin examples, workflow
-validation, real nono 0.69.0 integration, and isolated Maven consumer resolution
-are complete on `main`.
+The public repository is
+[`elonzh/nono-kt`](https://github.com/elonzh/nono-kt). The signed `v0.1.0` tag
+targets commit `858f19b48a74a5f5688d8e55915c73fda72fa237` and uses OpenPGP
+fingerprint `0F4D457140CE5DAADB28569D0F38CD75A5C4E1BC`.
 
-The release signing path was additionally verified with a disposable OpenPGP
-key: the main, sources, and Javadoc jars, Gradle module metadata, and POM were
-all signed and each detached signature was cryptographically verified. The
-disposable key and isolated repository were removed after validation.
+GitHub Actions release run
+[`30291280391`](https://github.com/elonzh/nono-kt/actions/runs/30291280391)
+completed successfully on Linux and macOS. Central deployment
+`d5914669-ca2d-435e-a64f-2d125e20125d` reached `PUBLISHED`, and the
+[`v0.1.0` GitHub Release](https://github.com/elonzh/nono-kt/releases/tag/v0.1.0)
+was created from the same tag.
 
-Steps 9–11 remain external: public GitHub repository creation and code egress
-require explicit publication authorization, and Maven Central publication
-requires the account's Central Portal credentials plus its persistent OpenPGP
-release key.
+External acceptance downloaded the main, sources, and Javadoc jars, Gradle
+module metadata, and POM from Maven Central. All five detached signatures
+verified against the public key fetched from `keyserver.ubuntu.com`, the main
+jar contains Java 17 bytecode, and a clean Java consumer resolved and ran
+`com.elonzh.nono:nono-kt:0.1.0` using only `mavenCentral()`.
+
+The persistent signing key remains in the local GPG keyring, its passphrase is
+backed up in macOS Keychain, and the four release credentials are configured as
+GitHub Actions secrets. Temporary plaintext signing files were removed after
+publication. The originating upstream request is
+[`nolabs-ai/nono#1496`](https://github.com/nolabs-ai/nono/issues/1496).
