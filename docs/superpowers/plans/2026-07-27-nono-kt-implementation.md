@@ -561,7 +561,7 @@ Run:
 
 Expected: all process and existing tests pass.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src
@@ -587,7 +587,7 @@ Preserve real child exit codes and partial output without shell invocation."
 - Produces: `JsonProtocols.parseProfile(stdout): NonoProfile`
 - Produces: `JsonProtocols.parseValidation(stdout, exitCode): NonoProfileValidation`
 
-- [ ] **Step 1: Write failing diagnostics tests**
+- [x] **Step 1: Write failing diagnostics tests**
 
 Use a literal merged report appended to child stderr:
 
@@ -606,7 +606,7 @@ Use a literal merged report appended to child stderr:
 
 Assert extraction leaves preceding child stderr unchanged, returns exit code 1, projects code/severity/message, preserves `rawJson`, and ignores unknown fields. Add tests for no JSON, malformed trailing JSON, nested braces in strings, and child JSON that lacks `session.exit_code`.
 
-- [ ] **Step 2: Write failing profile tests**
+- [x] **Step 2: Write failing profile tests**
 
 Use hand-written fixtures matching nono 0.69.0:
 
@@ -624,7 +624,7 @@ Use hand-written fixtures matching nono 0.69.0:
 
 Assert stable fields and exact raw JSON retention. Validation exit 2 with `valid=true` and deprecated keys must be represented as a strict deprecation failure, not a launch exception.
 
-- [ ] **Step 3: Run JSON tests and verify RED**
+- [x] **Step 3: Run JSON tests and verify RED**
 
 Run:
 
@@ -634,7 +634,7 @@ Run:
 
 Expected: compilation fails because protocol models and parsers are absent.
 
-- [ ] **Step 4: Implement resilient JSON decoding**
+- [x] **Step 4: Implement resilient JSON decoding**
 
 Configure:
 
@@ -648,7 +648,7 @@ private val json = Json {
 
 Diagnostics scanning walks backward over candidate `{` positions, attempts strict JSON parsing, and accepts only an object whose `session.exit_code` is numeric. Profile models project documented stable fields and retain the original JSON string for future nono fields.
 
-- [ ] **Step 5: Run JSON and full tests**
+- [x] **Step 5: Run JSON and full tests**
 
 Run:
 
