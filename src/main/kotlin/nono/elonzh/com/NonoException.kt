@@ -29,3 +29,13 @@ public class NonoExecutableProbeException(
 ) : NonoException(
         "Failed to probe nono executable $executable (exit $exitCode): ${stderr.trim()}",
     )
+
+public class NonoLaunchException(
+    public val argv: List<String>,
+    cause: Throwable,
+) : NonoException("Failed to launch nono executable ${argv.firstOrNull().orEmpty()}", cause)
+
+public class NonoProcessException(
+    message: String,
+    cause: Throwable,
+) : NonoException(message, cause)

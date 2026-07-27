@@ -422,7 +422,7 @@ Run:
 
 Expected: executable and renderer tests pass with no formatting violations.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src
@@ -464,7 +464,7 @@ public fun timeout(value: Duration): Builder
 public fun build(): NonoExecutionOptions
 ```
 
-- [ ] **Step 1: Create the fake nono fixture**
+- [x] **Step 1: Create the fake nono fixture**
 
 `FakeNono` writes an executable POSIX script into a temporary directory. It implements:
 
@@ -480,7 +480,7 @@ profile validate FILE --json    prints a fixed validation object
 
 The fixture records each argv element on its own line in a file passed through `FAKE_NONO_ARGS_FILE`.
 
-- [ ] **Step 2: Write failing process tests**
+- [x] **Step 2: Write failing process tests**
 
 Cover observable behavior:
 
@@ -494,7 +494,7 @@ assertFalse(result.cancelled)
 
 Add independent tests for byte stdin, inherited/discarded output, callback streaming, per-stream truncation, working directory, environment replacement/addition, timeout returning partial output, explicit cancellation, and descendant termination.
 
-- [ ] **Step 3: Run process tests and verify RED**
+- [x] **Step 3: Run process tests and verify RED**
 
 Run:
 
@@ -504,7 +504,7 @@ Run:
 
 Expected: compilation fails because execution types and engine are absent.
 
-- [ ] **Step 4: Implement bounded capture**
+- [x] **Step 4: Implement bounded capture**
 
 ```kotlin
 internal class BoundedByteAccumulator(private val limit: Int) {
@@ -516,7 +516,7 @@ internal class BoundedByteAccumulator(private val limit: Int) {
 
 Reject negative limits. Retain the first `limit` bytes and set `truncated` as soon as additional bytes arrive.
 
-- [ ] **Step 5: Implement execution options and result**
+- [x] **Step 5: Implement execution options and result**
 
 Use public factories:
 
@@ -532,7 +532,7 @@ NonoOutput.stream(listener, maxRetainedBytes)
 
 `NonoExecutionResult` exposes immutable byte-array copies, UTF-8 text helpers, `exitCode`, `duration`, `timedOut`, `cancelled`, `stdoutTruncated`, `stderrTruncated`, and nullable diagnostics/protocol-error fields.
 
-- [ ] **Step 6: Implement process launch and termination**
+- [x] **Step 6: Implement process launch and termination**
 
 Launch with:
 
@@ -550,7 +550,7 @@ val process = ProcessBuilder(argv)
 
 Never pass a single joined command string. Pump piped streams on daemon executor threads. Join pumps after process exit. On timeout or cancellation, destroy descendants deepest-first, call `destroy()`, wait up to 500 milliseconds, then call `destroyForcibly()` for survivors. Complete the result exactly once.
 
-- [ ] **Step 7: Run process tests and verify GREEN**
+- [x] **Step 7: Run process tests and verify GREEN**
 
 Run:
 
