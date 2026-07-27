@@ -1,0 +1,23 @@
+version: "3"
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  check:
+    desc: Run all tests and static checks
+    cmds:
+      - ./gradlew check ktlintCheck --no-daemon
+
+  lint:
+    desc: Check Kotlin and Kotlin Gradle formatting
+    cmds:
+      - ./gradlew ktlintCheck --no-daemon
+
+  format:
+    desc: Format Kotlin and Kotlin Gradle files
+    cmds:
+      - ./gradlew ktlintFormat --no-daemon

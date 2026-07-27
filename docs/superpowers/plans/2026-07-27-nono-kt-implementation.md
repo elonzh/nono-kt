@@ -31,7 +31,7 @@
 - `build.gradle.kts`: JVM compilation, tests, ktlint, source/Javadoc jars, Maven Central metadata, and publication.
 - `gradle/libs.versions.toml`: all plugin and library versions.
 - `gradle/wrapper/*`, `gradlew`, `gradlew.bat`: reproducible Gradle runtime.
-- `Taskfile.yaml`: `format`, `check`, `integration`, `docs`, and publication validation entry points.
+- `Taskfile.yml`: `format`, `check`, `integration`, `docs`, and publication validation entry points.
 - `.github/workflows/ci.yml`: Linux/macOS validation.
 - `.github/workflows/release.yml`: tag-driven Maven Central and GitHub release.
 
@@ -89,7 +89,7 @@
 - Create: `settings.gradle.kts`
 - Create: `build.gradle.kts`
 - Create: `gradle/libs.versions.toml`
-- Create: `Taskfile.yaml`
+- Create: `Taskfile.yml`
 - Create: `.gitignore`
 - Create: `src/test/kotlin/nono/elonzh/com/NonoVersionTest.kt`
 - Create: `src/main/kotlin/nono/elonzh/com/NonoVersion.kt`
@@ -100,15 +100,19 @@
 - Produces: `NonoVersion.requireAtLeast(NonoVersion): Unit`
 - Produces: `NonoCompatibilityException(required, actual)`
 
-- [ ] **Step 1: Add build configuration**
+- [x] **Step 1: Add build configuration**
 
 Use Kotlin 2.2.21, Java toolchain 17, explicit API mode, kotlinx-serialization-json 1.9.0, JUnit Platform, ktlint 14.0.1, and Maven Publish 0.35.0. Configure `VERSION_NAME` with fallback `0.1.0-SNAPSHOT`, group `com.elonzh.nono`, source/Javadoc jars, Apache-2.0 POM metadata, and `mavenCentral`/`signAllPublications`.
 
 ```kotlin
 kotlin {
     explicitApi()
-    jvmToolchain(17)
     compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.test {
@@ -116,7 +120,7 @@ tasks.test {
 }
 ```
 
-- [ ] **Step 2: Generate and verify the Gradle Wrapper**
+- [x] **Step 2: Generate and verify the Gradle Wrapper**
 
 Run:
 
@@ -127,7 +131,7 @@ gradle wrapper --gradle-version 8.14.3
 
 Expected: both commands exit 0 and the wrapper reports Gradle 8.14.3.
 
-- [ ] **Step 3: Write failing version tests**
+- [x] **Step 3: Write failing version tests**
 
 ```kotlin
 class NonoVersionTest {
@@ -148,7 +152,7 @@ class NonoVersionTest {
 }
 ```
 
-- [ ] **Step 4: Run the tests and verify RED**
+- [x] **Step 4: Run the tests and verify RED**
 
 Run:
 
@@ -158,7 +162,7 @@ Run:
 
 Expected: compilation fails because `NonoVersion` and the protocol exception do not exist.
 
-- [ ] **Step 5: Implement semantic version parsing**
+- [x] **Step 5: Implement semantic version parsing**
 
 ```kotlin
 public data class NonoVersion(
@@ -181,7 +185,7 @@ public data class NonoVersion(
 
 Parse an optional `nono ` prefix, three numeric components, and an optional SemVer prerelease. Reject trailing non-version text. Compare numeric prerelease identifiers numerically and other identifiers lexically.
 
-- [ ] **Step 6: Run checks and verify GREEN**
+- [x] **Step 6: Run checks and verify GREEN**
 
 Run:
 
@@ -194,7 +198,7 @@ Expected: all tests pass and ktlint reports no violations.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add settings.gradle.kts build.gradle.kts gradle Taskfile.yaml .gitignore src
+git add settings.gradle.kts build.gradle.kts gradle Taskfile.yml .gitignore src
 git commit -m "build: initialize nono-kt JVM library" \
   -m "Configure the Java 17 Kotlin build and publication metadata.
 
@@ -803,7 +807,7 @@ Add Kotlin DSL helpers and verified Java builders and getters."
 - Create: `examples/java/build.gradle.kts`
 - Create: `examples/java/src/main/java/example/Main.java`
 - Modify: `settings.gradle.kts`
-- Modify: `Taskfile.yaml`
+- Modify: `Taskfile.yml`
 
 **Interfaces:**
 - Consumes: the final public API from Task 5.
@@ -862,7 +866,7 @@ task docs
 - [ ] **Step 6: Commit**
 
 ```bash
-git add README.md README.zh-Hans.md docs examples settings.gradle.kts Taskfile.yaml CONTRIBUTING.md SECURITY.md CHANGELOG.md LICENSE
+git add README.md README.zh-Hans.md docs examples settings.gradle.kts Taskfile.yml CONTRIBUTING.md SECURITY.md CHANGELOG.md LICENSE
 git commit -m "docs: add bilingual usage and examples" \
   -m "Document installation, run policies, profiles, diagnostics, compatibility, and security in English and Chinese.
 
@@ -878,7 +882,7 @@ Compile standalone Kotlin and Java consumer examples as part of repository check
 - Create: `.github/workflows/release.yml`
 - Create: `docs/releasing.md`
 - Modify: `build.gradle.kts`
-- Modify: `Taskfile.yaml`
+- Modify: `Taskfile.yml`
 
 **Interfaces:**
 - Consumes: root `task check`, `task integration`, and Gradle publication tasks.
@@ -941,7 +945,7 @@ Parse both workflow files with a YAML parser in `task check`. Expected: all repo
 - [ ] **Step 6: Commit**
 
 ```bash
-git add .github build.gradle.kts Taskfile.yaml docs/releasing.md
+git add .github build.gradle.kts Taskfile.yml docs/releasing.md
 git commit -m "ci: automate validation and releases" \
   -m "Run the Kotlin/Java suite and real nono integration on Linux and macOS.
 
@@ -955,7 +959,7 @@ Validate Maven artifacts locally and publish signed tag releases to Central and 
 **Files:**
 - Create: `src/integrationTest/kotlin/nono/elonzh/com/NonoIntegrationTest.kt`
 - Modify: `build.gradle.kts`
-- Modify: `Taskfile.yaml`
+- Modify: `Taskfile.yml`
 - Modify: `CHANGELOG.md`
 
 **Interfaces:**
@@ -1027,7 +1031,7 @@ Expected: all tasks exit 0, diff check is clean, and only intended release chang
 - [ ] **Step 6: Commit the integration and release state**
 
 ```bash
-git add src/integrationTest build.gradle.kts Taskfile.yaml CHANGELOG.md
+git add src/integrationTest build.gradle.kts Taskfile.yml CHANGELOG.md
 git commit -m "test: verify nono CLI integration" \
   -m "Exercise version probing, sandboxed execution, profiles, diagnostics, output, exit codes, and termination against a real supported nono CLI.
 
