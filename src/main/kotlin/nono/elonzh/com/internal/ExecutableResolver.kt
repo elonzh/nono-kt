@@ -3,6 +3,7 @@ package nono.elonzh.com.internal
 import nono.elonzh.com.NonoExecutable
 import nono.elonzh.com.NonoExecutableNotFoundException
 import nono.elonzh.com.NonoExecutableProbeException
+import nono.elonzh.com.NonoLaunchException
 import nono.elonzh.com.NonoVersion
 import java.io.File
 import java.nio.file.Files
@@ -40,7 +41,15 @@ internal class ExecutableResolver(
         val resolved = resolve(path)
         val processBuilder = ProcessBuilder(resolved.toString(), "--version")
         processBuilder.environment().putAll(environment)
-        val process = processBuilder.start()
+        val process =
+            try {
+                processBuilder.start()
+            } catch (exception: Exception) {
+                throw NonoLaunchException(
+                    argv = listOf(resolved.toString(), "--version"),
+                    cause = exception,
+                )
+            }
         val stdout = process.inputStream.bufferedReader().use { it.readText() }
         val stderr = process.errorStream.bufferedReader().use { it.readText() }
         val exitCode = process.waitFor()

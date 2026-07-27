@@ -31,7 +31,6 @@ class RunArgumentRendererTest {
                 .suppressSavePrompt(Path.of("/ignored"))
                 .allowCurrentDirectory()
                 .workdir(Path.of("/work"))
-                .blockNetwork()
                 .networkProfile("package-downloads")
                 .allowDomain("repo.maven.apache.org")
                 .denyDomain("*.invalid.example")
@@ -117,7 +116,6 @@ class RunArgumentRendererTest {
                 "--allow-cwd",
                 "--workdir",
                 "/work",
-                "--block-net",
                 "--network-profile",
                 "package-downloads",
                 "--allow-domain",
@@ -266,6 +264,37 @@ class RunArgumentRendererTest {
                 .noAuditIntegrity()
                 .auditSignKey("keyring://audit")
                 .build()
+        }
+    }
+
+    @Test
+    fun `rejects explicit block network and proxy mode conflicts`() {
+        listOf<(NonoRunOptions.Builder) -> Unit>(
+            { it.networkProfile("strict") },
+            { it.allowDomain("example.com") },
+            { it.upstreamProxy("proxy.example:8080") },
+            { it.credential("github") },
+        ).forEach { configureProxy ->
+            assertFailsWith<IllegalArgumentException> {
+                NonoRunOptions
+                    .builder()
+                    .blockNetwork()
+                    .also(configureProxy)
+                    .build()
+            }
+        }
+    }
+
+    @Test
+    fun `rejects incomplete proxy options without a profile fallback`() {
+        assertFailsWith<IllegalArgumentException> {
+            NonoRunOptions.builder().allowEndpoint("github:GET:/repos/**").build()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            NonoRunOptions.builder().proxyPort(8080).build()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            NonoRunOptions.builder().upstreamBypass("internal.example").build()
         }
     }
 

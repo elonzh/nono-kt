@@ -6,12 +6,14 @@ import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -189,6 +191,39 @@ class ProcessEngineTest {
         execution.result().toCompletableFuture().get(5, TimeUnit.SECONDS)
 
         assertFalse(execution.cancel())
+    }
+
+    @Test
+    fun `rejects execution after close before launching a process`() {
+        engine.close()
+
+        assertFailsWith<NonoProcessException> {
+            engine.start(
+                argv("sleep", "30"),
+                NonoExecutionOptions.builder().build(),
+            )
+        }
+    }
+
+    @Test
+    fun `terminates process when caller executor rejects scheduling`() {
+        val ioExecutor = Executors.newSingleThreadExecutor()
+        val scheduler = Executors.newSingleThreadScheduledExecutor()
+        ioExecutor.shutdownNow()
+        scheduler.shutdownNow()
+        val rejectedEngine =
+            ProcessEngine(
+                ioExecutor = ioExecutor,
+                scheduler = scheduler,
+                ownsExecutors = false,
+            )
+
+        assertFailsWith<NonoProcessException> {
+            rejectedEngine.start(
+                argv("sleep", "30"),
+                NonoExecutionOptions.builder().build(),
+            )
+        }
     }
 
     @Test

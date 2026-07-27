@@ -66,6 +66,17 @@ class ExecutableResolverTest {
         assertEquals(NonoVersion(0, 69, 0), result.version)
     }
 
+    @Test
+    fun `wraps executable launch failure`() {
+        val executable = temporaryDirectory().resolve("broken-nono")
+        Files.writeString(executable, "#!/missing/interpreter\n")
+        check(executable.toFile().setExecutable(true)) { "failed to make $executable executable" }
+
+        assertFailsWith<NonoLaunchException> {
+            ExecutableResolver().probe(executable)
+        }
+    }
+
     private fun executable(
         relativePath: String,
         versionOutput: String,

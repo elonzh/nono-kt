@@ -27,103 +27,126 @@ internal class ProcessEngine(
         Executors.newSingleThreadScheduledExecutor(DaemonThreadFactory("nono-kt-timeout")),
     private val ownsExecutors: Boolean = true,
 ) : AutoCloseable {
+    private val lifecycleLock = Any()
+    private var closed = false
+
     fun start(
         argv: List<String>,
         options: NonoExecutionOptions,
-    ): NonoExecution {
-        require(argv.isNotEmpty()) { "argv must not be empty" }
-        argv.forEach { argument ->
-            require('\u0000' !in argument) { "argv must not contain NUL" }
-        }
-
-        val processBuilder = ProcessBuilder(argv)
-        options.workingDirectory?.let { processBuilder.directory(it.toFile()) }
-        if (!options.inheritEnvironment) {
-            processBuilder.environment().clear()
-        }
-        processBuilder.environment().putAll(options.environment)
-        configureRedirects(processBuilder, options)
-
-        val process =
-            try {
-                processBuilder.start()
-            } catch (exception: Exception) {
-                throw NonoLaunchException(argv = argv, cause = exception)
+    ): NonoExecution =
+        synchronized(lifecycleLock) {
+            if (closed) {
+                throw NonoProcessException(
+                    "nono process engine is closed",
+                    IllegalStateException("process engine is closed"),
+                )
+            }
+            require(argv.isNotEmpty()) { "argv must not be empty" }
+            argv.forEach { argument ->
+                require('\u0000' !in argument) { "argv must not contain NUL" }
             }
 
-        val stdoutCapture = accumulator(options.stdout)
-        val stderrCapture = accumulator(options.stderr)
-        val stdoutPump = pump(process.inputStream, options.stdout, stdoutCapture)
-        val stderrPump = pump(process.errorStream, options.stderr, stderrCapture)
-        val inputWriter = writeInput(process, options.input)
-        val completion = CompletableFuture<NonoExecutionResult>()
-        val terminationReason = AtomicReference(TerminationReason.NONE)
-        val startedAt = System.nanoTime()
-        var timeoutTask: ScheduledFuture<*>? = null
+            val processBuilder = ProcessBuilder(argv)
+            options.workingDirectory?.let { processBuilder.directory(it.toFile()) }
+            if (!options.inheritEnvironment) {
+                processBuilder.environment().clear()
+            }
+            processBuilder.environment().putAll(options.environment)
+            configureRedirects(processBuilder, options)
 
-        val execution =
-            ProcessExecution(
-                process = process,
-                completion = completion,
-                terminationReason = terminationReason,
-            )
+            val process =
+                try {
+                    processBuilder.start()
+                } catch (exception: Exception) {
+                    throw NonoLaunchException(argv = argv, cause = exception)
+                }
 
-        options.timeout?.let { timeout ->
-            timeoutTask =
-                scheduler.schedule(
-                    {
-                        if (process.isAlive &&
-                            terminationReason.compareAndSet(TerminationReason.NONE, TerminationReason.TIMEOUT)
-                        ) {
-                            terminateProcessTree(process)
-                        }
-                    },
-                    timeout.toNanos(),
-                    TimeUnit.NANOSECONDS,
-                )
-        }
+            var timeoutTask: ScheduledFuture<*>? = null
 
-        ioExecutor.execute {
             try {
-                val exitCode = process.waitFor()
-                inputWriter.join()
-                stdoutPump.join()
-                stderrPump.join()
-                completion.complete(
-                    NonoExecutionResult(
-                        exitCode = exitCode,
-                        stdout = stdoutCapture?.snapshot() ?: ByteArray(0),
-                        stderr = stderrCapture?.snapshot() ?: ByteArray(0),
-                        duration = Duration.ofNanos(System.nanoTime() - startedAt),
-                        timedOut = terminationReason.get() == TerminationReason.TIMEOUT,
-                        cancelled = terminationReason.get() == TerminationReason.CANCELLED,
-                        stdoutTruncated = stdoutCapture?.isTruncated() == true,
-                        stderrTruncated = stderrCapture?.isTruncated() == true,
-                    ),
-                )
-            } catch (exception: InterruptedException) {
-                Thread.currentThread().interrupt()
-                terminateProcessTree(process)
-                completion.completeExceptionally(
-                    NonoProcessException("Interrupted while waiting for nono", exception),
-                )
+                val stdoutCapture = accumulator(options.stdout)
+                val stderrCapture = accumulator(options.stderr)
+                val stdoutPump = pump(process.inputStream, options.stdout, stdoutCapture)
+                val stderrPump = pump(process.errorStream, options.stderr, stderrCapture)
+                val inputWriter = writeInput(process, options.input)
+                val completion = CompletableFuture<NonoExecutionResult>()
+                val terminationReason = AtomicReference(TerminationReason.NONE)
+                val startedAt = System.nanoTime()
+
+                val execution =
+                    ProcessExecution(
+                        process = process,
+                        completion = completion,
+                        terminationReason = terminationReason,
+                    )
+
+                options.timeout?.let { timeout ->
+                    timeoutTask =
+                        scheduler.schedule(
+                            {
+                                if (process.isAlive &&
+                                    terminationReason.compareAndSet(TerminationReason.NONE, TerminationReason.TIMEOUT)
+                                ) {
+                                    terminateProcessTree(process)
+                                }
+                            },
+                            timeout.toNanos(),
+                            TimeUnit.NANOSECONDS,
+                        )
+                }
+
+                ioExecutor.execute {
+                    try {
+                        val exitCode = process.waitFor()
+                        inputWriter.join()
+                        stdoutPump.join()
+                        stderrPump.join()
+                        completion.complete(
+                            NonoExecutionResult(
+                                exitCode = exitCode,
+                                stdout = stdoutCapture?.snapshot() ?: ByteArray(0),
+                                stderr = stderrCapture?.snapshot() ?: ByteArray(0),
+                                duration = Duration.ofNanos(System.nanoTime() - startedAt),
+                                timedOut = terminationReason.get() == TerminationReason.TIMEOUT,
+                                cancelled = terminationReason.get() == TerminationReason.CANCELLED,
+                                stdoutTruncated = stdoutCapture?.isTruncated() == true,
+                                stderrTruncated = stderrCapture?.isTruncated() == true,
+                            ),
+                        )
+                    } catch (exception: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                        terminateProcessTree(process)
+                        completion.completeExceptionally(
+                            NonoProcessException("Interrupted while waiting for nono", exception),
+                        )
+                    } catch (exception: Exception) {
+                        terminateProcessTree(process)
+                        completion.completeExceptionally(
+                            NonoProcessException("Failed while executing nono", unwrap(exception)),
+                        )
+                    } finally {
+                        timeoutTask?.cancel(false)
+                    }
+                }
+
+                execution
             } catch (exception: Exception) {
-                terminateProcessTree(process)
-                completion.completeExceptionally(
-                    NonoProcessException("Failed while executing nono", unwrap(exception)),
-                )
-            } finally {
                 timeoutTask?.cancel(false)
+                terminateProcessTree(process)
+                throw NonoProcessException("Failed to schedule nono execution", exception)
             }
         }
-
-        return execution
-    }
 
     override fun close() {
-        if (ownsExecutors) {
-            scheduler.shutdownNow()
-            ioExecutor.shutdownNow()
+        synchronized(lifecycleLock) {
+            if (closed) {
+                return
+            }
+            closed = true
+            if (ownsExecutors) {
+                scheduler.shutdownNow()
+                ioExecutor.shutdownNow()
+            }
         }
     }
 

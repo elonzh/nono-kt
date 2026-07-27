@@ -22,6 +22,13 @@ public class NonoRunOptions private constructor(
         private var extendsSelected = false
         private var allowNetworkSelected = false
         private var restrictedNetworkSelected = false
+        private var blockNetworkSelected = false
+        private var proxyModeSelected = false
+        private var proxyCredentialSelected = false
+        private var allowEndpointSelected = false
+        private var proxyPortSelected = false
+        private var upstreamProxySelected = false
+        private var upstreamBypassSelected = false
         private var detachedSelected = false
         private var detachTimeoutSelected = false
         private var rollbackSelected = false
@@ -134,6 +141,7 @@ public class NonoRunOptions private constructor(
 
         public fun blockNetwork(): Builder =
             apply {
+                blockNetworkSelected = true
                 restrictedNetworkSelected = true
                 flag("--block-net", conflictsWithConfig = true)
             }
@@ -147,12 +155,14 @@ public class NonoRunOptions private constructor(
 
         public fun networkProfile(value: String): Builder =
             apply {
+                proxyModeSelected = true
                 restrictedNetworkSelected = true
                 option("--network-profile", value, conflictsWithConfig = true)
             }
 
         public fun allowDomain(value: String): Builder =
             apply {
+                proxyModeSelected = true
                 restrictedNetworkSelected = true
                 option("--allow-domain", value, conflictsWithConfig = true)
             }
@@ -180,18 +190,22 @@ public class NonoRunOptions private constructor(
 
         public fun upstreamProxy(value: String): Builder =
             apply {
+                proxyModeSelected = true
+                upstreamProxySelected = true
                 restrictedNetworkSelected = true
                 option("--upstream-proxy", value, conflictsWithConfig = true)
             }
 
         public fun upstreamBypass(value: String): Builder =
             apply {
+                upstreamBypassSelected = true
                 restrictedNetworkSelected = true
                 option("--upstream-bypass", value)
             }
 
         public fun proxyPort(value: Int): Builder =
             apply {
+                proxyPortSelected = true
                 restrictedNetworkSelected = true
                 portOption("--proxy-port", value, conflictsWithConfig = true)
             }
@@ -209,12 +223,15 @@ public class NonoRunOptions private constructor(
 
         public fun credential(value: String): Builder =
             apply {
+                proxyModeSelected = true
+                proxyCredentialSelected = true
                 restrictedNetworkSelected = true
                 option("--credential", value, conflictsWithConfig = true)
             }
 
         public fun allowEndpoint(value: String): Builder =
             apply {
+                allowEndpointSelected = true
                 option("--allow-endpoint", value, conflictsWithConfig = true)
             }
 
@@ -410,6 +427,18 @@ public class NonoRunOptions private constructor(
             require(!extendsSelected || profileSelected) { "extends requires a profile" }
             require(!allowNetworkSelected || !restrictedNetworkSelected) {
                 "allow-network cannot be combined with network restrictions or proxy options"
+            }
+            require(!blockNetworkSelected || !proxyModeSelected) {
+                "block-network cannot be combined with proxy-mode options"
+            }
+            require(!allowEndpointSelected || proxyCredentialSelected || profileSelected) {
+                "allow-endpoint requires a credential or profile"
+            }
+            require(!proxyPortSelected || proxyModeSelected || profileSelected) {
+                "proxy port requires a proxy-mode option or profile"
+            }
+            require(!upstreamBypassSelected || upstreamProxySelected || profileSelected) {
+                "upstream bypass requires an upstream proxy or profile"
             }
             require(!detachTimeoutSelected || detachedSelected) { "detach timeout requires detached mode" }
             require(!rollbackSelected || !noRollbackSelected) {
