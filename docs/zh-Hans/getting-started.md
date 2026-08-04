@@ -1,7 +1,5 @@
 # 入门
 
-[English](../getting-started.md) · [首页](index.md)
-
 ## 环境要求
 
 - Java 17 或更高版本

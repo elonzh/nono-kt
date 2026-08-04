@@ -1,7 +1,5 @@
 # 兼容性
 
-[English](../compatibility.md) · [首页](index.md)
-
 | nono-kt | nono CLI | Java | Kotlin | 操作系统 |
 | --- | --- | --- | --- | --- |
 | 0.1.x | 0.69.0+ | 17+ | 2.2.x | Linux、macOS |

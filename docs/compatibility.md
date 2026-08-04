@@ -1,7 +1,5 @@
 # Compatibility
 
-[简体中文](zh-Hans/compatibility.md) · [Home](index.md)
-
 | nono-kt | nono CLI | Java | Kotlin | OS |
 | --- | --- | --- | --- | --- |
 | 0.1.x | 0.69.0+ | 17+ | 2.2.x | Linux, macOS |

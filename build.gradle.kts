@@ -101,12 +101,6 @@ tasks.register("docsCheck") {
             val chineseFile = file(chinese)
             require(englishFile.isFile) { "Missing English document: $english" }
             require(chineseFile.isFile) { "Missing Chinese document: $chinese" }
-            require(englishFile.readText().contains(chineseFile.name)) {
-                "$english does not link to $chinese"
-            }
-            require(chineseFile.readText().contains(englishFile.name)) {
-                "$chinese does not link to $english"
-            }
         }
 
         val markdownFiles =

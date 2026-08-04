@@ -1,7 +1,5 @@
 # Run and process API
 
-[简体中文](zh-Hans/run-api.md) · [Home](index.md)
-
 ## Policy builders
 
 `NonoRunOptions.Builder` follows nono 0.69.0 option families:

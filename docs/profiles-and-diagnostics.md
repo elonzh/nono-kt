@@ -1,7 +1,5 @@
 # Profiles and diagnostics
 
-[简体中文](zh-Hans/profiles-and-diagnostics.md) · [Home](index.md)
-
 ## Profiles
 
 The client maps the JSON forms of nono's profile commands:

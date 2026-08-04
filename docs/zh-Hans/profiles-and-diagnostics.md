@@ -1,7 +1,5 @@
 # Profile 与诊断
 
-[English](../profiles-and-diagnostics.md) · [首页](index.md)
-
 ## Profile
 
 客户端映射了 nono Profile 命令的 JSON 形式：

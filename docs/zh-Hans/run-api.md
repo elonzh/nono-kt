@@ -1,7 +1,5 @@
 # 运行与进程 API
 
-[English](../run-api.md) · [首页](index.md)
-
 ## 策略构建器
 
 `NonoRunOptions.Builder` 对应 nono 0.69.0 的选项族：
