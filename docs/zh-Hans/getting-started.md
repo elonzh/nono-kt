@@ -1,6 +1,6 @@
 # 入门
 
-[English](getting-started.md) · [首页](../README.zh-Hans.md)
+[English](../getting-started.md) · [首页](index.md)
 
 ## 环境要求
 
@@ -66,5 +66,5 @@ client.use {
 子进程退出码 1 或 127 等属于正常的 `NonoExecutionResult`。可执行文件查找、
 版本、启动和 JSON 协议错误使用 `NonoException` 异常体系。
 
-下一步可阅读[运行与进程 API](run-api.zh-Hans.md)或
-[Profile 与诊断](profiles-and-diagnostics.zh-Hans.md)。
+下一步可阅读[运行与进程 API](run-api.md)或
+[Profile 与诊断](profiles-and-diagnostics.md)。

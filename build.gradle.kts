@@ -83,10 +83,10 @@ tasks.check {
 val documentationPairs =
     listOf(
         "README.md" to "README.zh-Hans.md",
-        "docs/getting-started.md" to "docs/getting-started.zh-Hans.md",
-        "docs/run-api.md" to "docs/run-api.zh-Hans.md",
-        "docs/profiles-and-diagnostics.md" to "docs/profiles-and-diagnostics.zh-Hans.md",
-        "docs/compatibility.md" to "docs/compatibility.zh-Hans.md",
+        "docs/getting-started.md" to "docs/zh-Hans/getting-started.md",
+        "docs/run-api.md" to "docs/zh-Hans/run-api.md",
+        "docs/profiles-and-diagnostics.md" to "docs/zh-Hans/profiles-and-diagnostics.md",
+        "docs/compatibility.md" to "docs/zh-Hans/compatibility.md",
     )
 
 tasks.register("docsCheck") {
@@ -113,7 +113,7 @@ tasks.register("docsCheck") {
             files(
                 fileTree(projectDir) {
                     include("*.md")
-                    include("docs/*.md")
+                    include("docs/**/*.md")
                 },
             )
         val linkPattern = Regex("""\[[^]]*]\(([^)]+)\)""")

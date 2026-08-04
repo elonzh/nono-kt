@@ -1,6 +1,6 @@
 # 兼容性
 
-[English](compatibility.md) · [首页](../README.zh-Hans.md)
+[English](../compatibility.md) · [首页](index.md)
 
 | nono-kt | nono CLI | Java | Kotlin | 操作系统 |
 | --- | --- | --- | --- | --- |

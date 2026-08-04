@@ -1,6 +1,6 @@
 # Compatibility
 
-[简体中文](compatibility.zh-Hans.md) · [Home](../README.md)
+[简体中文](zh-Hans/compatibility.md) · [Home](index.md)
 
 | nono-kt | nono CLI | Java | Kotlin | OS |
 | --- | --- | --- | --- | --- |

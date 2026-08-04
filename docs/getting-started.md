@@ -1,6 +1,6 @@
 # Getting started
 
-[简体中文](getting-started.zh-Hans.md) · [Home](../README.md)
+[简体中文](zh-Hans/getting-started.md) · [Home](index.md)
 
 ## Requirements
 

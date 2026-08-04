@@ -1,6 +1,6 @@
 # Profiles and diagnostics
 
-[简体中文](profiles-and-diagnostics.zh-Hans.md) · [Home](../README.md)
+[简体中文](zh-Hans/profiles-and-diagnostics.md) · [Home](index.md)
 
 ## Profiles
 

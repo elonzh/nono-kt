@@ -55,10 +55,11 @@ try (NonoClient client = NonoClient.builder().build()) {
 
 ## 文档
 
-- [入门](docs/getting-started.zh-Hans.md)
-- [运行与进程 API](docs/run-api.zh-Hans.md)
-- [Profile 与诊断](docs/profiles-and-diagnostics.zh-Hans.md)
-- [兼容性](docs/compatibility.zh-Hans.md)
+- [文档网站](https://elonzh.github.io/nono-kt/)
+- [入门](docs/zh-Hans/getting-started.md)
+- [运行与进程 API](docs/zh-Hans/run-api.md)
+- [Profile 与诊断](docs/zh-Hans/profiles-and-diagnostics.md)
+- [兼容性](docs/zh-Hans/compatibility.md)
 - [Kotlin 示例](examples/kotlin/src/main/kotlin/example/Main.kt)
 - [Java 示例](examples/java/src/main/java/example/Main.java)
 

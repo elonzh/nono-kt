@@ -1,6 +1,6 @@
 # Run and process API
 
-[简体中文](run-api.zh-Hans.md) · [Home](../README.md)
+[简体中文](zh-Hans/run-api.md) · [Home](index.md)
 
 ## Policy builders
 

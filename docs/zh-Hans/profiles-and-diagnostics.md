@@ -1,6 +1,6 @@
 # Profile 与诊断
 
-[English](profiles-and-diagnostics.md) · [首页](../README.zh-Hans.md)
+[English](../profiles-and-diagnostics.md) · [首页](index.md)
 
 ## Profile
 
