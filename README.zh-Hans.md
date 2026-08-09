@@ -5,18 +5,17 @@
 面向 Kotlin 和 Java 的 [`nono`](https://github.com/nolabs-ai/nono) CLI
 客户端，直接执行参数数组，不经过 Shell 解析。
 
-> 状态：早期预览。首个支持版本面向 nono 0.69.0+、Java 17+、Linux 和
-> macOS。
+> 状态：早期预览。选择 nono 版本前请阅读[兼容性策略](docs/zh-Hans/compatibility.md)。
 
 ## 安装
 
 ```kotlin
 dependencies {
-    implementation("com.elonzh.nono:nono-kt:0.1.0")
+    implementation("com.elonzh.nono:nono-kt:0.2.0")
 }
 ```
 
-请单独安装 nono 0.69.0 或更高版本并加入 `PATH`；也可以通过
+请单独安装 nono 并加入 `PATH`；也可以通过
 `NonoClient.builder().executable(path)` 指定路径。
 
 ## Kotlin

@@ -4,12 +4,12 @@
 
 - Java 17 or later
 - Kotlin 2.2.x when consuming from Kotlin
-- nono 0.69.0 or later on Linux or macOS
+- the nono CLI used by the current development baseline on Linux or macOS
 
 Add the Maven Central dependency:
 
 ```kotlin
-implementation("com.elonzh.nono:nono-kt:0.1.0")
+implementation("com.elonzh.nono:nono-kt:0.2.0")
 ```
 
 ## Create a client

@@ -4,12 +4,12 @@
 
 - Java 17 或更高版本
 - Kotlin 调用方使用 Kotlin 2.2.x
-- Linux 或 macOS 上的 nono 0.69.0 或更高版本
+- Linux 或 macOS 上符合当前开发基线的 nono CLI
 
 添加 Maven Central 依赖：
 
 ```kotlin
-implementation("com.elonzh.nono:nono-kt:0.1.0")
+implementation("com.elonzh.nono:nono-kt:0.2.0")
 ```
 
 ## 创建客户端

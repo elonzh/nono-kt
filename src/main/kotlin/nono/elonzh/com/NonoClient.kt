@@ -118,7 +118,12 @@ public class NonoClient private constructor(
         (requestOptions ?: defaultExecutionOptions).withEnvironment(environmentOverrides)
 
     private fun parseDiagnostics(result: NonoExecutionResult): NonoExecutionResult {
-        val parsed = JsonProtocols.parseDiagnostics(result.rawStderrText())
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = result.rawStderrText(),
+                expectedExitCode = result.exitCode,
+                stderrTruncated = result.stderrTruncated,
+            )
         return result.withDiagnostics(
             childStderr = parsed.stderrWithoutDiagnostics.toByteArray(StandardCharsets.UTF_8),
             report = parsed.report,
@@ -241,7 +246,7 @@ public class NonoClient private constructor(
 
     public companion object {
         @JvmField
-        public val MINIMUM_NONO_VERSION: NonoVersion = NonoVersion(0, 69, 0)
+        public val MINIMUM_NONO_VERSION: NonoVersion = NonoVersion(0, 72, 0)
 
         @JvmStatic
         public fun builder(): Builder = Builder()

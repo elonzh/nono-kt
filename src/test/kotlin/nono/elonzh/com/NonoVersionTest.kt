@@ -9,8 +9,8 @@ class NonoVersionTest {
     @Test
     fun `parses current nono version output`() {
         assertEquals(
-            NonoVersion(major = 0, minor = 69, patch = 0),
-            NonoVersion.parse("nono 0.69.0\n"),
+            NonoVersion(major = 0, minor = 72, patch = 0),
+            NonoVersion.parse("nono 0.72.0\n"),
         )
     }
 
@@ -24,12 +24,12 @@ class NonoVersionTest {
 
     @Test
     fun `orders numeric prerelease identifiers numerically`() {
-        assertTrue(NonoVersion.parse("0.69.0-rc.2") < NonoVersion.parse("0.69.0-rc.10"))
+        assertTrue(NonoVersion.parse("0.72.0-rc.2") < NonoVersion.parse("0.72.0-rc.10"))
     }
 
     @Test
     fun `orders prerelease before final release`() {
-        assertTrue(NonoVersion.parse("0.69.0-rc.1") < NonoVersion.parse("0.69.0"))
+        assertTrue(NonoVersion.parse("0.72.0-rc.1") < NonoVersion.parse("0.72.0"))
     }
 
     @Test
@@ -43,10 +43,10 @@ class NonoVersionTest {
     fun `reports incompatible installed version`() {
         val exception =
             assertFailsWith<NonoCompatibilityException> {
-                NonoVersion(0, 68, 0).requireAtLeast(NonoVersion(0, 69, 0))
+                NonoVersion(0, 71, 0).requireAtLeast(NonoVersion(0, 72, 0))
             }
 
-        assertEquals(NonoVersion(0, 69, 0), exception.required)
-        assertEquals(NonoVersion(0, 68, 0), exception.actual)
+        assertEquals(NonoVersion(0, 72, 0), exception.required)
+        assertEquals(NonoVersion(0, 71, 0), exception.actual)
     }
 }

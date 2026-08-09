@@ -28,13 +28,31 @@ internal object JsonProtocols {
             ignoreUnknownKeys = true
         }
 
-    fun parseDiagnostics(stderr: String): ParsedDiagnostics {
+    fun parseDiagnostics(
+        stderr: String,
+        expectedExitCode: Int,
+        stderrTruncated: Boolean,
+    ): ParsedDiagnostics {
+        if (stderrTruncated) {
+            return ParsedDiagnostics(
+                report = null,
+                stderrWithoutDiagnostics = stderr,
+                protocolError = "Cannot parse nono diagnostics JSON: stderr capture was truncated",
+            )
+        }
+
         var protocolError: String? = null
         for (index in stderr.indices.reversed()) {
             if (stderr[index] != '{') {
                 continue
             }
-            val candidate = stderr.substring(index).trimEnd()
+            val endExclusive = findJsonObjectEnd(stderr, index)
+            val candidate =
+                if (endExclusive == null) {
+                    stderr.substring(index).trimEnd()
+                } else {
+                    stderr.substring(index, endExclusive)
+                }
             val root =
                 try {
                     json.parseToJsonElement(candidate) as? JsonObject
@@ -47,6 +65,9 @@ internal object JsonProtocols {
 
             val session = root["session"] as? JsonObject ?: continue
             val exitCode = session.int("exit_code") ?: continue
+            if (exitCode != expectedExitCode || !session.hasDiagnosticReportShape()) {
+                continue
+            }
             return ParsedDiagnostics(
                 report =
                     NonoDiagnosticReport(
@@ -58,7 +79,11 @@ internal object JsonProtocols {
                         violationCount = session.arraySize("violations"),
                         rawJson = candidate,
                     ),
-                stderrWithoutDiagnostics = stderr.substring(0, index),
+                stderrWithoutDiagnostics =
+                    stderr.removeRange(
+                        index,
+                        consumeLineEnding(stderr, requireNotNull(endExclusive)),
+                    ),
                 protocolError = null,
             )
         }
@@ -68,6 +93,47 @@ internal object JsonProtocols {
             protocolError = protocolError,
         )
     }
+
+    private fun findJsonObjectEnd(
+        text: String,
+        start: Int,
+    ): Int? {
+        var depth = 0
+        var inString = false
+        var escaped = false
+        for (index in start until text.length) {
+            val character = text[index]
+            if (inString) {
+                when {
+                    escaped -> escaped = false
+                    character == '\\' -> escaped = true
+                    character == '"' -> inString = false
+                }
+                continue
+            }
+            when (character) {
+                '"' -> inString = true
+                '{' -> depth++
+                '}' -> {
+                    depth--
+                    if (depth == 0) {
+                        return index + 1
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    private fun consumeLineEnding(
+        text: String,
+        index: Int,
+    ): Int =
+        when {
+            text.startsWith("\r\n", index) -> index + 2
+            text.startsWith("\n", index) -> index + 1
+            else -> index
+        }
 
     fun parseProfileList(stdout: String): List<NonoProfileSummary> {
         val array =
@@ -153,6 +219,8 @@ internal object JsonProtocols {
 
     private fun JsonObject.arraySize(key: String): Int = (get(key) as? JsonArray)?.size ?: 0
 
+    private fun JsonObject.hasDiagnosticReportShape(): Boolean = DIAGNOSTIC_REPORT_ARRAY_FIELDS.all { key -> get(key) is JsonArray }
+
     private fun JsonObject.diagnostics(key: String): List<NonoDiagnostic> =
         (get(key) as? JsonArray)
             ?.mapNotNull { element ->
@@ -166,5 +234,7 @@ internal object JsonProtocols {
                 )
             }.orEmpty()
 
+    private val DIAGNOSTIC_REPORT_ARRAY_FIELDS =
+        listOf("denials", "ipc_denials", "violations", "diagnostics")
     private const val STRICT_DEPRECATION_EXIT = 2
 }

@@ -358,6 +358,11 @@ public class NonoRunOptions private constructor(
                 pathOption("--rollback-dest", value)
             }
 
+        public fun silent(): Builder =
+            apply {
+                flag("--silent")
+            }
+
         public fun noDiagnostics(): Builder =
             apply {
                 flag("--no-diagnostics")

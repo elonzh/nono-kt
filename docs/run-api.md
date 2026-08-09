@@ -2,7 +2,7 @@
 
 ## Policy builders
 
-`NonoRunOptions.Builder` follows nono 0.69.0 option families:
+`NonoRunOptions.Builder` follows the current development baseline's option families:
 
 - profile/config: `profile`, `extendProfile`, `config`
 - filesystem: `allow`, `read`, `write`, file and Unix-socket variants,
@@ -13,8 +13,8 @@
   `allowCommand`, `blockCommand`
 - platform/resources: launch services, GPU, HTTP/2, Linux sandbox policy,
   memory and process limits
-- lifecycle: dry-run, detach, timeout, rollback, diagnostics, audit, session,
-  capability elevation, verbosity
+- lifecycle: dry-run, detach, timeout, rollback, silent mode, diagnostics,
+  audit, session, capability elevation, verbosity
 
 The builder rejects known conflicting combinations before launching nono.
 Policy still belongs to the caller; the library does not infer permissions.
