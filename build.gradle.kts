@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.elonzh.nono"
-version = providers.gradleProperty("VERSION_NAME").orElse("0.1.0-SNAPSHOT").get()
+version = providers.gradleProperty("VERSION_NAME").orElse("0.2.0-SNAPSHOT").get()
 
 kotlin {
     explicitApi()

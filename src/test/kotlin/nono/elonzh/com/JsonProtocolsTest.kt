@@ -40,7 +40,12 @@ class JsonProtocolsTest {
             }
             """.trimIndent()
 
-        val parsed = JsonProtocols.parseDiagnostics("child error\n$json\n")
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = "child error\n$json\n",
+                expectedExitCode = 1,
+                stderrTruncated = false,
+            )
         val report = assertNotNull(parsed.report)
 
         assertEquals("child error\n", parsed.stderrWithoutDiagnostics)
@@ -70,7 +75,12 @@ class JsonProtocolsTest {
             }
             """.trimIndent()
 
-        val parsed = JsonProtocols.parseDiagnostics("prefix\n$json")
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = "prefix\n$json",
+                expectedExitCode = 2,
+                stderrTruncated = false,
+            )
 
         assertEquals(2, assertNotNull(parsed.report).exitCode)
         assertEquals("prefix\n", parsed.stderrWithoutDiagnostics)
@@ -92,7 +102,12 @@ class JsonProtocolsTest {
             """.trimIndent()
         val guidance = "Command exited with code 1.\nNo path denials were detected.\n"
 
-        val parsed = JsonProtocols.parseDiagnostics("child error\n$json\n$guidance")
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = "child error\n$json\n$guidance",
+                expectedExitCode = 1,
+                stderrTruncated = false,
+            )
 
         assertEquals(1, assertNotNull(parsed.report).exitCode)
         assertEquals("child error\n$guidance", parsed.stderrWithoutDiagnostics)
@@ -103,7 +118,12 @@ class JsonProtocolsTest {
     fun `preserves stderr when no diagnostic object exists`() {
         val stderr = "child emitted {not diagnostics}\n"
 
-        val parsed = JsonProtocols.parseDiagnostics(stderr)
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = stderr,
+                expectedExitCode = 1,
+                stderrTruncated = false,
+            )
 
         assertNull(parsed.report)
         assertEquals(stderr, parsed.stderrWithoutDiagnostics)
@@ -113,7 +133,12 @@ class JsonProtocolsTest {
     fun `reports malformed trailing diagnostic candidate`() {
         val stderr = "child error\n{\"session\":{\"exit_code\":1,}}\n"
 
-        val parsed = JsonProtocols.parseDiagnostics(stderr)
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = stderr,
+                expectedExitCode = 1,
+                stderrTruncated = false,
+            )
 
         assertNull(parsed.report)
         assertEquals(stderr, parsed.stderrWithoutDiagnostics)
@@ -124,10 +149,63 @@ class JsonProtocolsTest {
     fun `does not mistake child JSON for diagnostics`() {
         val stderr = "{\"status\":\"failed\",\"code\":1}\n"
 
-        val parsed = JsonProtocols.parseDiagnostics(stderr)
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = stderr,
+                expectedExitCode = 1,
+                stderrTruncated = false,
+            )
 
         assertNull(parsed.report)
         assertNull(parsed.protocolError)
+        assertEquals(stderr, parsed.stderrWithoutDiagnostics)
+    }
+
+    @Test
+    fun `does not mistake embedded child session JSON for diagnostics`() {
+        val stderr = """child {"session":{"exit_code":7}} output""" + "\n"
+
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = stderr,
+                expectedExitCode = 7,
+                stderrTruncated = false,
+            )
+
+        assertNull(parsed.report)
+        assertNull(parsed.protocolError)
+        assertEquals(stderr, parsed.stderrWithoutDiagnostics)
+    }
+
+    @Test
+    fun `rejects diagnostic report with a mismatched process exit code`() {
+        val stderr = diagnosticReport(exitCode = 42)
+
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = stderr,
+                expectedExitCode = 7,
+                stderrTruncated = false,
+            )
+
+        assertNull(parsed.report)
+        assertNull(parsed.protocolError)
+        assertEquals(stderr, parsed.stderrWithoutDiagnostics)
+    }
+
+    @Test
+    fun `preserves truncated stderr instead of accepting an embedded report`() {
+        val stderr = "${diagnosticReport(exitCode = 7)}\nafter-child-json\n{\n"
+
+        val parsed =
+            JsonProtocols.parseDiagnostics(
+                stderr = stderr,
+                expectedExitCode = 7,
+                stderrTruncated = true,
+            )
+
+        assertNull(parsed.report)
+        assertNotNull(parsed.protocolError)
         assertEquals(stderr, parsed.stderrWithoutDiagnostics)
     }
 
@@ -185,4 +263,17 @@ class JsonProtocolsTest {
         assertTrue(validation.valid)
         assertTrue(validation.strictDeprecationFailure)
     }
+
+    private fun diagnosticReport(exitCode: Int): String =
+        """
+        {
+          "session": {
+            "exit_code": $exitCode,
+            "denials": [],
+            "ipc_denials": [],
+            "violations": [],
+            "diagnostics": []
+          }
+        }
+        """.trimIndent()
 }

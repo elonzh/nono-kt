@@ -13,7 +13,7 @@ class NonoIntegrationTest {
     @Test
     fun `probes installed nono and runs an isolated command`() {
         client().use { client ->
-            assertTrue(client.executable.version >= NonoVersion(0, 69, 0))
+            assertTrue(client.executable.version >= NonoVersion(0, 72, 0))
 
             val result =
                 client.run(
@@ -73,6 +73,27 @@ class NonoIntegrationTest {
             assertEquals("diagnostic", result.stdoutText())
             assertNotNull(result.diagnostics)
             assertEquals(null, result.diagnosticsProtocolError)
+            assertTrue(result.rawStderrText().contains("\"session\""))
+        }
+    }
+
+    @Test
+    fun `extracts diagnostics before appended failure guidance`() {
+        client().use { client ->
+            val result =
+                client.run(
+                    NonoRunRequest
+                        .builder("/bin/sh", "-c", "printf child-error >&2; exit 7")
+                        .options(NonoRunOptions.builder().diagnosticsJson().build())
+                        .build(),
+                )
+
+            assertEquals(7, result.exitCode)
+            assertEquals(7, assertNotNull(result.diagnostics).exitCode)
+            assertEquals(null, result.diagnosticsProtocolError)
+            assertTrue(result.stderrText().contains("child-error"))
+            assertTrue(result.stderrText().contains("Command exited with code 7"))
+            assertFalse(result.stderrText().contains("\"session\""))
             assertTrue(result.rawStderrText().contains("\"session\""))
         }
     }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-nono_version="${NONO_VERSION:-0.69.0}"
+nono_version="${NONO_VERSION:-0.72.0}"
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 install_directory="${NONO_INSTALL_DIR:-${repository_root}/build/nono/bin}"
 temporary_directory="$(mktemp -d)"

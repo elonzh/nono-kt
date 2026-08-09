@@ -12,6 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class NonoClientTest {
@@ -36,7 +37,7 @@ class NonoClientTest {
             .environment("FAKE_NONO_ARGS_FILE", fake.argumentsFile.toString())
             .build()
             .use { client ->
-                assertEquals(NonoVersion(0, 69, 0), client.executable.version)
+                assertEquals(NonoVersion(0, 72, 0), client.executable.version)
             }
 
         assertEquals(listOf("--version"), fake.recordedArguments())
@@ -44,7 +45,7 @@ class NonoClientTest {
 
     @Test
     fun `strict client rejects old nono`() {
-        val fake = fakeNono(version = "0.68.0")
+        val fake = fakeNono(version = "0.71.0")
 
         assertFailsWith<NonoCompatibilityException> {
             NonoClient.builder().executable(fake.executable).build()
@@ -64,7 +65,7 @@ class NonoClientTest {
 
         client.use {
             assertFalse(Files.exists(fake.argumentsFile))
-            assertEquals(NonoVersion(0, 69, 0), client.executable.version)
+            assertEquals(NonoVersion(0, 72, 0), client.executable.version)
             assertEquals(listOf("--version"), fake.recordedArguments())
         }
     }
@@ -108,6 +109,30 @@ class NonoClientTest {
             assertTrue(result.rawStderrText().contains("\"session\""))
             assertEquals("network_blocked", assertNotNull(result.diagnostics).diagnostics.single().code)
             assertEquals(null, result.diagnosticsProtocolError)
+        }
+    }
+
+    @Test
+    fun `preserves stderr when diagnostics capture is truncated`() {
+        val fake = fakeNono()
+        client(fake).use { client ->
+            val result =
+                client.run(
+                    NonoRunRequest
+                        .builder("diagnostics")
+                        .options(NonoRunOptions.builder().diagnosticsJson().build())
+                        .executionOptions(
+                            NonoExecutionOptions
+                                .builder()
+                                .stderr(NonoOutput.capture(12))
+                                .build(),
+                        ).build(),
+                )
+
+            assertTrue(result.stderrTruncated)
+            assertNull(result.diagnostics)
+            assertNotNull(result.diagnosticsProtocolError)
+            assertEquals(result.rawStderrText(), result.stderrText())
         }
     }
 
@@ -196,7 +221,7 @@ class NonoClientTest {
             .environment("FAKE_NONO_ARGS_FILE", fake.argumentsFile.toString())
             .build()
 
-    private fun fakeNono(version: String = "0.69.0"): FakeNono {
+    private fun fakeNono(version: String = "0.72.0"): FakeNono {
         val directory = createTempDirectory("nono-kt-client-")
         temporaryDirectories.add(directory)
         return FakeNono.create(directory.resolve("bin"), version)

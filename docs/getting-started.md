@@ -4,7 +4,7 @@
 
 - Java 17 or later
 - Kotlin 2.2.x when consuming from Kotlin
-- nono 0.69.0 or later on Linux or macOS
+- nono 0.72.0 or later on Linux or macOS for current development
 
 Add the Maven Central dependency:
 

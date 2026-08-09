@@ -4,7 +4,7 @@
 
 - Java 17 或更高版本
 - Kotlin 调用方使用 Kotlin 2.2.x
-- Linux 或 macOS 上的 nono 0.69.0 或更高版本
+- 当前开发版本要求 Linux 或 macOS 上的 nono 0.72.0 或更高版本
 
 添加 Maven Central 依赖：
 

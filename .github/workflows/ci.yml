@@ -51,10 +51,10 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v6
       - uses: go-task/setup-task@v2
-      - name: Install nono 0.69.0
+      - name: Install nono 0.72.0
         env:
           NONO_INSTALL_DIR: ${{ runner.temp }}/nono/bin
-          NONO_VERSION: 0.69.0
+          NONO_VERSION: 0.72.0
         run: |
           scripts/install-nono.sh
           echo "${NONO_INSTALL_DIR}" >> "${GITHUB_PATH}"

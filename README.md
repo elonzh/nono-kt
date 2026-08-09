@@ -5,8 +5,8 @@
 Kotlin and Java client for running commands through the
 [`nono`](https://github.com/nolabs-ai/nono) CLI without shell parsing.
 
-> Status: early preview. The first supported release targets nono 0.69.0+,
-> Java 17+, Linux, and macOS.
+> Status: early preview. Current 0.2.x development targets nono 0.72.0+,
+> Java 17+, Linux, and macOS. The published 0.1.x line supports nono 0.69.0+.
 
 ## Installation
 
@@ -16,8 +16,8 @@ dependencies {
 }
 ```
 
-Install `nono` 0.69.0 or later separately and make it available on `PATH`, or
-pass its path to `NonoClient.builder().executable(path)`.
+Install `nono` 0.72.0 or later for current development and make it available on
+`PATH`, or pass its path to `NonoClient.builder().executable(path)`.
 
 ## Kotlin
 

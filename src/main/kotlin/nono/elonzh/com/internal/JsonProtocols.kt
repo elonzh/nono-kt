@@ -28,7 +28,19 @@ internal object JsonProtocols {
             ignoreUnknownKeys = true
         }
 
-    fun parseDiagnostics(stderr: String): ParsedDiagnostics {
+    fun parseDiagnostics(
+        stderr: String,
+        expectedExitCode: Int,
+        stderrTruncated: Boolean,
+    ): ParsedDiagnostics {
+        if (stderrTruncated) {
+            return ParsedDiagnostics(
+                report = null,
+                stderrWithoutDiagnostics = stderr,
+                protocolError = "Cannot parse nono diagnostics JSON: stderr capture was truncated",
+            )
+        }
+
         var protocolError: String? = null
         for (index in stderr.indices.reversed()) {
             if (stderr[index] != '{') {
@@ -53,6 +65,9 @@ internal object JsonProtocols {
 
             val session = root["session"] as? JsonObject ?: continue
             val exitCode = session.int("exit_code") ?: continue
+            if (exitCode != expectedExitCode || !session.hasDiagnosticReportShape()) {
+                continue
+            }
             return ParsedDiagnostics(
                 report =
                     NonoDiagnosticReport(
@@ -204,6 +219,8 @@ internal object JsonProtocols {
 
     private fun JsonObject.arraySize(key: String): Int = (get(key) as? JsonArray)?.size ?: 0
 
+    private fun JsonObject.hasDiagnosticReportShape(): Boolean = DIAGNOSTIC_REPORT_ARRAY_FIELDS.all { key -> get(key) is JsonArray }
+
     private fun JsonObject.diagnostics(key: String): List<NonoDiagnostic> =
         (get(key) as? JsonArray)
             ?.mapNotNull { element ->
@@ -217,5 +234,7 @@ internal object JsonProtocols {
                 )
             }.orEmpty()
 
+    private val DIAGNOSTIC_REPORT_ARRAY_FIELDS =
+        listOf("denials", "ipc_denials", "violations", "diagnostics")
     private const val STRICT_DEPRECATION_EXIT = 2
 }

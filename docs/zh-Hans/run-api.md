@@ -2,7 +2,7 @@
 
 ## 策略构建器
 
-`NonoRunOptions.Builder` 对应 nono 0.69.0 的选项族：
+`NonoRunOptions.Builder` 对应 nono 0.72.0 的选项族：
 
 - Profile/配置：`profile`、`extendProfile`、`config`
 - 文件系统：`allow`、`read`、`write`、文件和 Unix Socket 变体、

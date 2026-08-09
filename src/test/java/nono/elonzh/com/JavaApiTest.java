@@ -20,7 +20,7 @@ class JavaApiTest {
                 """
                 #!/bin/sh
                 if [ "$1" = "--version" ]; then
-                  printf 'nono 0.69.0\\n'
+                  printf 'nono 0.72.0\\n'
                   exit 0
                 fi
                 if [ "$1" = "run" ]; then
@@ -51,7 +51,7 @@ class JavaApiTest {
             assertEquals("java output", new String(result.getStdout()));
             assertEquals(0, asyncResult.getExitCode());
             assertEquals("default", profile.getName());
-            assertEquals(new NonoVersion(0, 69, 0, null), client.getExecutable().getVersion());
+            assertEquals(new NonoVersion(0, 72, 0, null), client.getExecutable().getVersion());
         }
     }
 }

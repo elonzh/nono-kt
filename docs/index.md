@@ -19,5 +19,5 @@ features:
   - title: Safe process execution
     details: Pass argv directly, capture bounded output, and cancel asynchronous process trees.
   - title: Forward compatible
-    details: Use typed nono 0.69.0 APIs or pass newer subcommands through the generic command API.
+    details: Use typed nono 0.72.0 APIs or pass newer subcommands through the generic command API.
 ---

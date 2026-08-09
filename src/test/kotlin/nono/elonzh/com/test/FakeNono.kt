@@ -20,7 +20,7 @@ internal class FakeNono private constructor(
     companion object {
         fun create(
             directory: Path,
-            version: String = "0.69.0",
+            version: String = "0.72.0",
         ): FakeNono {
             directory.createDirectories()
             val executable = directory.resolve("nono")

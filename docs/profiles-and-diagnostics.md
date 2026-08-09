@@ -43,6 +43,7 @@ stderr even if the CLI appends guidance after it. `stderr` contains all
 remaining stderr without the report, while
 `rawStderr` preserves the original captured bytes. Unknown JSON fields are
 retained in the report's `rawJson`. If a candidate report is malformed,
-`diagnosticsProtocolError` is set and the child result remains available.
+or stderr capture is truncated, `diagnosticsProtocolError` is set and the
+retained stderr remains intact.
 
 Diagnostics never change the child exit code.

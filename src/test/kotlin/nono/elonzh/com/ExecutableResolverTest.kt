@@ -25,8 +25,8 @@ class ExecutableResolverTest {
 
     @Test
     fun `explicit executable wins over PATH`() {
-        val explicit = executable("explicit/nono", "nono 0.69.0")
-        val pathExecutable = executable("path/nono", "nono 0.70.0")
+        val explicit = executable("explicit/nono", "nono 0.72.0")
+        val pathExecutable = executable("path/nono", "nono 0.73.0")
 
         val resolved =
             ExecutableResolver(environment = mapOf("PATH" to pathExecutable.parent.toString()))
@@ -37,7 +37,7 @@ class ExecutableResolverTest {
 
     @Test
     fun `finds executable on PATH`() {
-        val executable = executable("bin/nono", "nono 0.69.0")
+        val executable = executable("bin/nono", "nono 0.72.0")
 
         val resolved =
             ExecutableResolver(environment = mapOf("PATH" to executable.parent.toString()))
@@ -58,12 +58,12 @@ class ExecutableResolverTest {
 
     @Test
     fun `probes executable version`() {
-        val executable = executable("bin/nono", "nono 0.69.0")
+        val executable = executable("bin/nono", "nono 0.72.0")
 
         val result = ExecutableResolver().probe(executable)
 
         assertEquals(executable.toAbsolutePath().normalize(), result.path)
-        assertEquals(NonoVersion(0, 69, 0), result.version)
+        assertEquals(NonoVersion(0, 72, 0), result.version)
     }
 
     @Test

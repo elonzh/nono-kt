@@ -2,12 +2,13 @@
 
 | nono-kt | nono CLI | Java | Kotlin | 操作系统 |
 | --- | --- | --- | --- | --- |
+| 0.2.x（开发中） | 0.72.0+ | 17+ | 2.2.x | Linux、macOS |
 | 0.1.x | 0.69.0+ | 17+ | 2.2.x | Linux、macOS |
 
 默认情况下，nono-kt 会在创建客户端时校验 CLI。可以用 `minimumVersion` 提高
 最低版本；不支持降低版本，因为类型化参数和 JSON 解析面向上表所列版本。
 
-类型化 `NonoRunOptions` API 对应 nono 0.69.0。通用
+当前类型化 `NonoRunOptions` API 对应 nono 0.72.0。通用
 `NonoCommandRequest` 会原样传递 argv，因此无需等待库发版即可调用后续子命令，
 但不会自动将其输出转换为类型化模型。
 
