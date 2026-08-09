@@ -9,7 +9,7 @@
 Add the Maven Central dependency:
 
 ```kotlin
-implementation("com.elonzh.nono:nono-kt:0.1.0")
+implementation("com.elonzh.nono:nono-kt:0.2.0")
 ```
 
 ## Create a client

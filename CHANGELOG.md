@@ -3,7 +3,7 @@
 All notable changes are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 0.2.0 - 2026-08-09
 
 - Track the current pre-1.0 nono development baseline and install the latest
   official release in CI so upstream incompatibilities surface early.
