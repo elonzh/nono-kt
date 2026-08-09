@@ -13,8 +13,8 @@
   `allowCommand`, `blockCommand`
 - platform/resources: launch services, GPU, HTTP/2, Linux sandbox policy,
   memory and process limits
-- lifecycle: dry-run, detach, timeout, rollback, diagnostics, audit, session,
-  capability elevation, verbosity
+- lifecycle: dry-run, detach, timeout, rollback, silent mode, diagnostics,
+  audit, session, capability elevation, verbosity
 
 The builder rejects known conflicting combinations before launching nono.
 Policy still belongs to the caller; the library does not infer permissions.

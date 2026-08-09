@@ -25,6 +25,8 @@ val request = NonoRunRequest.builder("curl", "https://example.com")
     .options(
         NonoRunOptions.builder()
             .blockNetwork()
+            .silent()
+            .noDiagnostics()
             .diagnosticsJson()
             .build(),
     )
@@ -36,8 +38,8 @@ result.diagnostics?.diagnostics?.forEach { diagnostic ->
 }
 ```
 
-启用 `diagnosticsJson()` 后，nono-kt 会从 stderr 提取 nono 追加的报告。
-`stderr` 只包含子进程 stderr，`rawStderr` 保留原始捕获字节。未知 JSON 字段保留
+启用 `diagnosticsJson()` 后，即使 CLI 在报告后继续追加说明文本，nono-kt 也会从
+stderr 中提取 nono 报告。`stderr` 保留移除报告后的其余内容，`rawStderr` 保留原始捕获字节。未知 JSON 字段保留
 在报告的 `rawJson` 中。候选报告格式错误时会设置
 `diagnosticsProtocolError`，子进程结果仍可读取。
 

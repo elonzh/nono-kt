@@ -34,7 +34,13 @@ internal object JsonProtocols {
             if (stderr[index] != '{') {
                 continue
             }
-            val candidate = stderr.substring(index).trimEnd()
+            val endExclusive = findJsonObjectEnd(stderr, index)
+            val candidate =
+                if (endExclusive == null) {
+                    stderr.substring(index).trimEnd()
+                } else {
+                    stderr.substring(index, endExclusive)
+                }
             val root =
                 try {
                     json.parseToJsonElement(candidate) as? JsonObject
@@ -58,7 +64,11 @@ internal object JsonProtocols {
                         violationCount = session.arraySize("violations"),
                         rawJson = candidate,
                     ),
-                stderrWithoutDiagnostics = stderr.substring(0, index),
+                stderrWithoutDiagnostics =
+                    stderr.removeRange(
+                        index,
+                        consumeLineEnding(stderr, requireNotNull(endExclusive)),
+                    ),
                 protocolError = null,
             )
         }
@@ -68,6 +78,47 @@ internal object JsonProtocols {
             protocolError = protocolError,
         )
     }
+
+    private fun findJsonObjectEnd(
+        text: String,
+        start: Int,
+    ): Int? {
+        var depth = 0
+        var inString = false
+        var escaped = false
+        for (index in start until text.length) {
+            val character = text[index]
+            if (inString) {
+                when {
+                    escaped -> escaped = false
+                    character == '\\' -> escaped = true
+                    character == '"' -> inString = false
+                }
+                continue
+            }
+            when (character) {
+                '"' -> inString = true
+                '{' -> depth++
+                '}' -> {
+                    depth--
+                    if (depth == 0) {
+                        return index + 1
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    private fun consumeLineEnding(
+        text: String,
+        index: Int,
+    ): Int =
+        when {
+            text.startsWith("\r\n", index) -> index + 2
+            text.startsWith("\n", index) -> index + 1
+            else -> index
+        }
 
     fun parseProfileList(stdout: String): List<NonoProfileSummary> {
         val array =

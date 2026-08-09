@@ -25,6 +25,8 @@ val request = NonoRunRequest.builder("curl", "https://example.com")
     .options(
         NonoRunOptions.builder()
             .blockNetwork()
+            .silent()
+            .noDiagnostics()
             .diagnosticsJson()
             .build(),
     )
@@ -36,8 +38,9 @@ result.diagnostics?.diagnostics?.forEach { diagnostic ->
 }
 ```
 
-When `diagnosticsJson()` is requested, nono-kt extracts nono's trailing report
-from stderr. `stderr` contains child stderr without the report, while
+When `diagnosticsJson()` is requested, nono-kt extracts nono's report from
+stderr even if the CLI appends guidance after it. `stderr` contains all
+remaining stderr without the report, while
 `rawStderr` preserves the original captured bytes. Unknown JSON fields are
 retained in the report's `rawJson`. If a candidate report is malformed,
 `diagnosticsProtocolError` is set and the child result remains available.

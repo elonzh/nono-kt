@@ -77,6 +77,29 @@ class JsonProtocolsTest {
     }
 
     @Test
+    fun `extracts diagnostics followed by nono guidance`() {
+        val json =
+            """
+            {
+              "session": {
+                "exit_code": 1,
+                "denials": [{"path":"/input"}],
+                "ipc_denials": [],
+                "violations": [],
+                "diagnostics": []
+              }
+            }
+            """.trimIndent()
+        val guidance = "Command exited with code 1.\nNo path denials were detected.\n"
+
+        val parsed = JsonProtocols.parseDiagnostics("child error\n$json\n$guidance")
+
+        assertEquals(1, assertNotNull(parsed.report).exitCode)
+        assertEquals("child error\n$guidance", parsed.stderrWithoutDiagnostics)
+        assertNull(parsed.protocolError)
+    }
+
+    @Test
     fun `preserves stderr when no diagnostic object exists`() {
         val stderr = "child emitted {not diagnostics}\n"
 

@@ -3,6 +3,12 @@
 All notable changes are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+- Add typed `silent()` support for `nono run --silent`.
+- Extract diagnostics JSON even when nono appends human-readable guidance after
+  the report.
+
 ## 0.1.0 - 2026-07-27
 
 - Add Kotlin and Java APIs for `nono run`.

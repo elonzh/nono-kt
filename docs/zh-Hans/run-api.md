@@ -11,8 +11,8 @@
 - 网络：`blockNetwork`、`allowNetwork`、Profile、域名、端口、代理和 CA
 - 凭据与命令：凭据、端点、环境变量凭据、`allowCommand`、`blockCommand`
 - 平台与资源：Launch Services、GPU、HTTP/2、Linux 沙箱策略、内存和进程限制
-- 生命周期：Dry-run、分离、超时、回滚、诊断、审计、会话、Capability
-  Elevation 和详细日志
+- 生命周期：Dry-run、分离、超时、回滚、静默模式、诊断、审计、会话、
+  Capability Elevation 和详细日志
 
 构建器会在启动 nono 之前拒绝已知冲突组合。策略仍由调用方负责，库不会自行
 推断权限。

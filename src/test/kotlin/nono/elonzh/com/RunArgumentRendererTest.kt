@@ -9,6 +9,20 @@ import kotlin.test.assertFailsWith
 
 class RunArgumentRendererTest {
     @Test
+    fun `renders silent mode`() {
+        val request =
+            NonoRunRequest
+                .builder("echo", "hello")
+                .options(NonoRunOptions.builder().silent().build())
+                .build()
+
+        assertEquals(
+            listOf("nono", "run", "--silent", "--", "echo", "hello"),
+            RunArgumentRenderer.render(Path.of("nono"), request),
+        )
+    }
+
+    @Test
     fun `renders every canonical nono run flag without a shell`() {
         val options =
             NonoRunOptions
@@ -61,6 +75,7 @@ class RunArgumentRendererTest {
                 .rollbackAll()
                 .skipDirectory("target")
                 .rollbackDestination(Path.of("/allow/rollback"))
+                .silent()
                 .noDiagnostics()
                 .diagnosticsJson()
                 .startupTimeout(Duration.ofSeconds(10))
@@ -168,6 +183,7 @@ class RunArgumentRendererTest {
                 "target",
                 "--rollback-dest",
                 "/allow/rollback",
+                "--silent",
                 "--no-diagnostics",
                 "--diagnostics-json",
                 "--startup-timeout",
