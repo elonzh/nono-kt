@@ -5,8 +5,8 @@ All notable changes are documented here. The project follows
 
 ## Unreleased
 
-- Raise the default minimum and typed CLI baseline to nono 0.72.0 for the
-  upcoming 0.2.x line.
+- Track the current pre-1.0 nono development baseline and install the latest
+  official release in CI so upstream incompatibilities surface early.
 - Add typed `silent()` support for `nono run --silent`.
 - Extract diagnostics JSON even when nono appends human-readable guidance after
   the report.

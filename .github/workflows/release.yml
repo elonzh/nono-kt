@@ -31,10 +31,9 @@ jobs:
         run: |
           project_version="$(./gradlew -q printVersion --no-daemon)"
           test "${GITHUB_REF_NAME}" = "v${project_version}"
-      - name: Install nono 0.72.0
+      - name: Install latest nono
         env:
           NONO_INSTALL_DIR: ${{ runner.temp }}/nono/bin
-          NONO_VERSION: 0.72.0
         run: |
           scripts/install-nono.sh
           echo "${NONO_INSTALL_DIR}" >> "${GITHUB_PATH}"

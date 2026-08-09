@@ -1,7 +1,7 @@
 # Releasing
 
 Releases are published from signed `vX.Y.Z` tags after CI succeeds on Linux and
-macOS with the pinned nono version.
+macOS with the latest official nono release available when the workflow runs.
 
 ## Repository secrets
 

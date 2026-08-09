@@ -1,11 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-nono_version="${NONO_VERSION:-0.72.0}"
+nono_version="${NONO_VERSION:-latest}"
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 install_directory="${NONO_INSTALL_DIR:-${repository_root}/build/nono/bin}"
 temporary_directory="$(mktemp -d)"
 trap 'rm -rf "${temporary_directory}"' EXIT
+
+if [[ "${nono_version}" = "latest" ]]; then
+  latest_release_url="$(
+    curl --http1.1 --fail --location --silent --show-error \
+      --retry 5 \
+      --retry-all-errors \
+      --output /dev/null \
+      --write-out '%{url_effective}' \
+      "https://github.com/nolabs-ai/nono/releases/latest"
+  )"
+  nono_version="${latest_release_url##*/}"
+  nono_version="${nono_version#v}"
+fi
+
+if [[ ! "${nono_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+  echo "Invalid nono release version: ${nono_version}" >&2
+  exit 1
+fi
 
 case "$(uname -s):$(uname -m)" in
   Darwin:arm64)
@@ -28,6 +46,8 @@ esac
 
 archive="nono-v${nono_version}-${target}.tar.gz"
 release_base="https://github.com/nolabs-ai/nono/releases/download/v${nono_version}"
+
+echo "Installing nono ${nono_version} for ${target}"
 
 curl --http1.1 --fail --location --silent --show-error \
   --retry 5 \

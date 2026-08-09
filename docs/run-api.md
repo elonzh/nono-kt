@@ -2,7 +2,7 @@
 
 ## Policy builders
 
-`NonoRunOptions.Builder` follows nono 0.72.0 option families:
+`NonoRunOptions.Builder` follows the current development baseline's option families:
 
 - profile/config: `profile`, `extendProfile`, `config`
 - filesystem: `allow`, `read`, `write`, file and Unix-socket variants,
