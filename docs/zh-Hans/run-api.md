@@ -7,15 +7,24 @@
 - Profile/配置：`profile`、`extendProfile`、`config`
 - 文件系统：`allow`、`read`、`write`、文件和 Unix Socket 变体、
   `allowCurrentDirectory`、`workdir`、`bypassProtection`、
-  `suppressSavePrompt`
+  `suppressSavePrompt`、`strictBrokerPath`
 - 网络：`blockNetwork`、`allowNetwork`、Profile、域名、端口、代理和 CA
 - 凭据与命令：凭据、端点、环境变量凭据、`allowCommand`、`blockCommand`
-- 平台与资源：Launch Services、GPU、HTTP/2、Linux 沙箱策略、内存和进程限制
+- 平台与资源：Launch Services、GPU、HTTP/2、Linux 沙箱策略与命名空间隔离、
+  内存和进程限制（Linux cgroup v2）
 - 生命周期：Dry-run、分离、超时、回滚、静默模式、诊断、审计、会话、
   Capability Elevation 和详细日志
 
 构建器会在启动 nono 之前拒绝已知冲突组合。策略仍由调用方负责，库不会自行
 推断权限。
+
+启用 `strictBrokerPath()` 后，如果沙箱可以写入宿主机 `PATH` 中的目录，
+nono 会拒绝启动。
+
+在 Linux 上，`isolateLinuxNamespaces(LinuxNamespace.NET, LinuxNamespace.IPC)`
+会在 Profile 的隔离策略上追加命名空间。网络隔离需要 `blockNetwork()` 或代理
+网络策略。`LinuxNamespace.LOOPBACK` 需要网络隔离，并允许在隔离环境自己的回环
+接口上使用 TCP。nono 在启动时检查合并后的策略及宿主机是否支持所选命名空间。
 
 ## 进程 I/O
 

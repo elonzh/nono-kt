@@ -23,7 +23,19 @@ class RunArgumentRendererTest {
     }
 
     @Test
-    fun `renders every canonical nono run flag without a shell`() {
+    fun `renders Linux namespaces together as one argument`() {
+        val options =
+            NonoRunOptions
+                .builder()
+                .blockNetwork()
+                .isolateLinuxNamespaces(LinuxNamespace.NET, LinuxNamespace.LOOPBACK, LinuxNamespace.IPC, LinuxNamespace.UTS)
+                .build()
+
+        assertEquals(listOf("--block-net", "--isolate", "net,loopback,ipc,uts"), options.arguments)
+    }
+
+    @Test
+    fun `renders typed nono run flags without a shell`() {
         val options =
             NonoRunOptions
                 .builder()
@@ -62,6 +74,7 @@ class RunArgumentRendererTest {
                 .environmentCredentialMap("keyring://token", "TOKEN")
                 .allowLaunchServices()
                 .allowGpu()
+                .strictBrokerPath()
                 .allowHttp2()
                 .linuxSandboxPolicy(LinuxSandboxPolicy.LANDLOCK)
                 .memory("512M")
@@ -163,6 +176,7 @@ class RunArgumentRendererTest {
                 "TOKEN",
                 "--allow-launch-services",
                 "--allow-gpu",
+                "--strict-broker-path",
                 "--allow-http2",
                 "--sandbox-policy",
                 "landlock",

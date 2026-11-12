@@ -6,12 +6,16 @@
 
 ```kotlin
 val profiles: List<NonoProfileSummary> = client.listProfiles()
-val profile: NonoProfile = client.showProfile("locked")
+val profile: NonoProfile = client.showProfile("default")
 val validation: NonoProfileValidation =
     client.validateProfile("/work/profile.json", strict = true)
 ```
 
-Profile 模型暴露稳定字段并保留 `rawJson`，因此在 nono-kt 增加类型化访问器之前，
+调用 `showProfile` 或 `NonoRunOptions.Builder.profile` 时，软件包提供的 Profile
+应使用 `NonoProfileSummary.name` 中的全限定名，例如 `nolabs-ai/claude`。
+摘要中的 `pack` 标识所属软件包。
+
+Profile 模型保留 `rawJson`，因此在 nono-kt 增加类型化访问器之前，
 调用方仍能读取 nono 新增字段。校验退出码 2 通过
 `strictDeprecationFailure` 表示；其他意外命令失败会抛出
 `NonoCommandFailedException`。

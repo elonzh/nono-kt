@@ -9,7 +9,7 @@
 Add the Maven Central dependency:
 
 ```kotlin
-implementation("com.elonzh.nono:nono-kt:0.2.0")
+implementation("com.elonzh.nono:nono-kt:0.3.0")
 ```
 
 ## Create a client
@@ -37,12 +37,10 @@ The child command is always a list of arguments:
 val request = NonoRunRequest.builder("java", "-jar", "app.jar")
     .options(
         NonoRunOptions.builder()
-            .profile("locked")
+            .profile("default")
             .read(Path.of("input"))
             .write(Path.of("output"))
             .blockNetwork()
-            .memory("512M")
-            .maxProcesses(32)
             .build(),
     )
     .build()

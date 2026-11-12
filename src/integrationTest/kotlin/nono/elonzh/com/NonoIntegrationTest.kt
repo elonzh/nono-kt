@@ -1,5 +1,8 @@
 package nono.elonzh.com
 
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -35,6 +38,47 @@ class NonoIntegrationTest {
             assertTrue(profiles.isNotEmpty())
             assertTrue(profiles.all { it.name.isNotBlank() })
             assertTrue(profiles.all { it.rawJson.startsWith("{") })
+            assertEquals("default", client.showProfile("default").name)
+        }
+    }
+
+    @Test
+    fun `strict broker path prevents launch with a writable PATH entry`(
+        @TempDir directory: Path,
+    ) {
+        val path = "$directory:${System.getenv("PATH").orEmpty()}"
+        clientBuilder().environment("PATH", path).build().use { client ->
+            val result =
+                client.run(
+                    nonoRun(listOf("/usr/bin/printf", "unexpected")) {
+                        allowCurrentDirectory()
+                        allow(directory)
+                        strictBrokerPath()
+                    },
+                )
+
+            assertTrue(result.exitCode != 0)
+            assertEquals("", result.stdoutText())
+            assertTrue(result.stderrText().contains("PATH is sandbox-writable"))
+        }
+    }
+
+    @Test
+    @EnabledOnOs(OS.LINUX)
+    fun `Linux loopback isolation requires a network namespace`() {
+        client().use { client ->
+            val result =
+                client.run(
+                    nonoRun(listOf("/usr/bin/printf", "unexpected")) {
+                        allowCurrentDirectory()
+                        blockNetwork()
+                        isolateLinuxNamespaces(LinuxNamespace.LOOPBACK)
+                    },
+                )
+
+            assertTrue(result.exitCode != 0)
+            assertEquals("", result.stdoutText())
+            assertTrue(result.stderrText().contains("requires linux.isolate.network"))
         }
     }
 
@@ -121,9 +165,10 @@ class NonoIntegrationTest {
         }
     }
 
-    private fun client(): NonoClient {
-        val builder = NonoClient.builder()
-        System.getenv("NONO_EXECUTABLE")?.let { builder.executable(Path.of(it)) }
-        return builder.build()
-    }
+    private fun client(): NonoClient = clientBuilder().build()
+
+    private fun clientBuilder(): NonoClient.Builder =
+        NonoClient.builder().apply {
+            System.getenv("NONO_EXECUTABLE")?.let { executable(Path.of(it)) }
+        }
 }

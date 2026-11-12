@@ -7,17 +7,26 @@
 - profile/config: `profile`, `extendProfile`, `config`
 - filesystem: `allow`, `read`, `write`, file and Unix-socket variants,
   `allowCurrentDirectory`, `workdir`, `bypassProtection`,
-  `suppressSavePrompt`
+  `suppressSavePrompt`, `strictBrokerPath`
 - network: `blockNetwork`, `allowNetwork`, profile/domain/port/proxy/CA methods
 - credentials and commands: credential, endpoint, environment credential,
   `allowCommand`, `blockCommand`
 - platform/resources: launch services, GPU, HTTP/2, Linux sandbox policy,
-  memory and process limits
+  Linux namespace isolation, memory and process limits (Linux cgroup v2)
 - lifecycle: dry-run, detach, timeout, rollback, silent mode, diagnostics,
   audit, session, capability elevation, verbosity
 
 The builder rejects known conflicting combinations before launching nono.
 Policy still belongs to the caller; the library does not infer permissions.
+
+Use `strictBrokerPath()` to reject a run when the sandbox can write to a
+directory on the host `PATH`.
+
+On Linux, `isolateLinuxNamespaces(LinuxNamespace.NET, LinuxNamespace.IPC)`
+adds namespaces to the profile's isolation policy. Network isolation requires
+`blockNetwork()` or a proxied network policy. `LinuxNamespace.LOOPBACK`
+requires network isolation and enables TCP on the namespace's own loopback.
+nono checks the combined policy and the host's namespace support at launch.
 
 ## Process I/O
 

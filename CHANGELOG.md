@@ -3,6 +3,12 @@
 All notable changes are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.3.0 - 2026-11-12
+
+- Preserve package identity for profiles listed by their fully qualified names.
+- Add typed options for Linux namespace isolation and strict checks for writable
+  directories on the host PATH.
+
 ## 0.2.0 - 2026-08-09
 
 - Track the current pre-1.0 nono development baseline and install the latest

@@ -6,12 +6,17 @@ The client maps the JSON forms of nono's profile commands:
 
 ```kotlin
 val profiles: List<NonoProfileSummary> = client.listProfiles()
-val profile: NonoProfile = client.showProfile("locked")
+val profile: NonoProfile = client.showProfile("default")
 val validation: NonoProfileValidation =
     client.validateProfile("/work/profile.json", strict = true)
 ```
 
-Profile models expose stable fields and retain `rawJson` so callers can inspect
+For package profiles, use the fully qualified name (for example,
+`nolabs-ai/claude`) from `NonoProfileSummary.name` with `showProfile` or
+`NonoRunOptions.Builder.profile`. The summary's `pack` identifies the owning
+package.
+
+Profile models retain `rawJson` so callers can inspect
 new nono fields before nono-kt adds typed accessors. Validation exit code 2 is
 represented by `strictDeprecationFailure`; other unexpected command failures
 throw `NonoCommandFailedException`.

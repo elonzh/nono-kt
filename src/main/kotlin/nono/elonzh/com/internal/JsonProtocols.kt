@@ -143,10 +143,12 @@ internal object JsonProtocols {
             val value =
                 element as? JsonObject
                     ?: throw NonoProtocolException("nono profile list entry was not an object")
+            val name = value.requiredString("name", "profile list")
+            val source = value.requiredString("source", "profile list")
             NonoProfileSummary(
-                name = value.requiredString("name", "profile list"),
-                source = value.requiredString("source", "profile list"),
-                pack = value.string("pack"),
+                name = name,
+                source = source,
+                pack = value.string("pack") ?: name.takeIf { source == "pack" && '/' in it },
                 description = value.string("description").orEmpty(),
                 extends = value.stringList("extends"),
                 error = value.string("error"),

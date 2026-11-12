@@ -11,6 +11,16 @@ public enum class LinuxSandboxPolicy(
     EXTERNAL("external"),
 }
 
+/** Values accepted by nono's Linux namespace isolation flag. */
+public enum class LinuxNamespace(
+    internal val cliValue: String,
+) {
+    NET("net"),
+    LOOPBACK("loopback"),
+    IPC("ipc"),
+    UTS("uts"),
+}
+
 public class NonoRunOptions private constructor(
     internal val arguments: List<String>,
 ) {
@@ -275,6 +285,12 @@ public class NonoRunOptions private constructor(
                 flag("--allow-gpu", conflictsWithConfig = true)
             }
 
+        /** Reject sandbox policies that let the child write to directories on the host PATH. */
+        public fun strictBrokerPath(): Builder =
+            apply {
+                flag("--strict-broker-path")
+            }
+
         public fun allowHttp2(): Builder =
             apply {
                 flag("--allow-http2", conflictsWithConfig = true)
@@ -283,6 +299,16 @@ public class NonoRunOptions private constructor(
         public fun linuxSandboxPolicy(value: LinuxSandboxPolicy): Builder =
             apply {
                 option("--sandbox-policy", value.cliValue)
+            }
+
+        /**
+         * Add Linux namespaces to the selected profile's isolation settings.
+         * [LinuxNamespace.LOOPBACK] requires network isolation in the resulting policy.
+         */
+        public fun isolateLinuxNamespaces(vararg namespaces: LinuxNamespace): Builder =
+            apply {
+                require(namespaces.isNotEmpty()) { "at least one Linux namespace is required" }
+                option("--isolate", namespaces.joinToString(",") { it.cliValue })
             }
 
         public fun memory(value: String): Builder =

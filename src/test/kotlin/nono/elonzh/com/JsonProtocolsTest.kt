@@ -226,6 +226,25 @@ class JsonProtocolsTest {
     }
 
     @Test
+    fun `preserves package identity from old and new profile list entries`() {
+        val json =
+            """
+            [
+              {"name":"example/agent","source":"pack","description":"Agent","extends":[]},
+              {"name":"agent-alias","source":"pack","pack":"example/agent"},
+              {"name":"example/broken","source":"pack","error":"Invalid profile"}
+            ]
+            """.trimIndent()
+
+        val profiles = JsonProtocols.parseProfileList(json)
+
+        assertEquals(listOf("example/agent", "example/agent", "example/broken"), profiles.map { it.pack })
+        assertEquals("example/agent", profiles.first().name)
+        assertEquals("Invalid profile", profiles.last().error)
+        assertFalse(profiles.first().rawJson.contains("\"pack\":"))
+    }
+
+    @Test
     fun `parses resolved profile while retaining unknown fields`() {
         val json =
             """{"name":"locked","description":"Locked","extends":["default"],"filesystem":{"read":["/src"]},"future":true}"""

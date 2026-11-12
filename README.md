@@ -12,7 +12,7 @@ Kotlin and Java client for running commands through the
 
 ```kotlin
 dependencies {
-    implementation("com.elonzh.nono:nono-kt:0.2.0")
+    implementation("com.elonzh.nono:nono-kt:0.3.0")
 }
 ```
 

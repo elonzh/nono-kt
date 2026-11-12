@@ -9,7 +9,7 @@
 添加 Maven Central 依赖：
 
 ```kotlin
-implementation("com.elonzh.nono:nono-kt:0.2.0")
+implementation("com.elonzh.nono:nono-kt:0.3.0")
 ```
 
 ## 创建客户端
@@ -36,12 +36,10 @@ val client = NonoClient.builder()
 val request = NonoRunRequest.builder("java", "-jar", "app.jar")
     .options(
         NonoRunOptions.builder()
-            .profile("locked")
+            .profile("default")
             .read(Path.of("input"))
             .write(Path.of("output"))
             .blockNetwork()
-            .memory("512M")
-            .maxProcesses(32)
             .build(),
     )
     .build()
